@@ -28,7 +28,7 @@ def register():
     
     if loc in next_level_nodes:
         # use Eve to post
-        url = next_level_nodes[loc]
+        url = next_level_nodes[loc] + '/td'
         data = td
     elif loc in find_child:
         # go to lower database use register API
