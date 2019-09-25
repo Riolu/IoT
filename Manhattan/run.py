@@ -43,7 +43,7 @@ def register():
     
     requests.post(url, data=data, headers=headers)
       
-    return td, data
+    return data
     
 if __name__ == '__main__':
     app.run(port=5000)
