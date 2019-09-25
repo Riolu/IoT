@@ -5,6 +5,11 @@ from flask import Flask, redirect, url_for, request
 
 app = Eve()
 
+@app.before_request
+def log_request_info():
+    app.logger.debug('Headers: %s', request.headers)
+    app.logger.debug('Body: %s', request.get_data())
+
 MASTER_URL = "http://localhost:5000"
 
 # urls of all the next-level nodes
