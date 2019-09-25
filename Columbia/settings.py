@@ -77,7 +77,11 @@ td = {
     # most global settings can be overridden at resource level
     'resource_methods': ['GET', 'POST'],
 
-    # 'schema': schema
+    'schema': {
+        'title': {
+            'type': 'string'
+        }
+    }
 }
 
 DOMAIN = {
