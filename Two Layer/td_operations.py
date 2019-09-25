@@ -1,4 +1,8 @@
+import json
+from pymongo import MongoClient
 
+client = MongoClient('localhost', 27017)
+db = client['Manhattan']
 
 
 def register(loc, td):
@@ -8,6 +12,9 @@ def register(loc, td):
     loc: location of the td to be registered
     td: json_ld format
     '''
+    
+
+
 
 
 
