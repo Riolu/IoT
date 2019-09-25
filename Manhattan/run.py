@@ -40,9 +40,10 @@ def register():
         data = request.data
         
     headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
+    
     requests.post(url, data=data, headers=headers)
       
-    return td
+    return td, data
     
 if __name__ == '__main__':
     app.run(port=5000)
