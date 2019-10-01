@@ -34,7 +34,7 @@ def register():
     if loc in next_level_nodes:
         # use Eve to post
         url = next_level_nodes[loc] + '/td'
-        data = td
+        data = json.dumps(td)
     elif loc in find_child:
         # go to lower database use register API
         url = next_level_nodes[find_child(loc)] + '/register'
@@ -45,8 +45,7 @@ def register():
         data = request.data
         
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-    
-    requests.post(url, data=json.dumps(data), headers=headers)
+    requests.post(url, data=data, headers=headers)
     
     return data
     
