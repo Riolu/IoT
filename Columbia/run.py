@@ -13,7 +13,7 @@ def log_request_info():
 MASTER_URL = "http://localhost:5000"
 
 # urls of all the next-level nodes
-next_level_nodes = set()
+next_level_nodes = dict()
 
 # which next-level node to find target
 find_child = dict()
@@ -32,11 +32,11 @@ def register():
     
     if loc in next_level_nodes:
         # use Eve to post
-        url = locToDbBaseUrl[loc]
+        url = next_level_nodes[loc]
         data = td
     elif loc in find_child:
         # go to lower database use register API
-        url = locToDbBaseUrl[find_child(loc)] + '/register'
+        url = next_level_nodes[find_child(loc)] + '/register'
         data = request.data
     else:
         # go to master database use register API
