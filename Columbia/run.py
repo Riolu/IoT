@@ -43,8 +43,8 @@ def register():
         url = MASTER_URL + '/register'
         data = request.data
         
-    headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
-    requests.post(url, data=data, headers=headers)
+    headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+    requests.post(url, data=json.dumps(data), headers=headers)
 
 
     
