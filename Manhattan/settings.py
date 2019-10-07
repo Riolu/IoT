@@ -96,7 +96,8 @@ loc_to_url = {
     #     'field': 'loc'
     # },
     'resource_methods': ['GET'],
-    'item_methods': ['GET']
+    'item_methods': ['GET'],
+    'schema': schema
 }
 
 DOMAIN = {
