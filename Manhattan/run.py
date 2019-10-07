@@ -47,7 +47,11 @@ def register():
 
         # check whether the type is already in type_to_targetLoc
         if td["@type"] not in type_to_targetLoc:
-            requests.post(request.host_url+"info", data=?, headers=headers)
+            info_data = {
+                "type": td["@type"],
+                "targetLoc": targetLoc
+            }
+            requests.post(request.host_url+"info", data=info_data, headers=headers)
 
     elif targetLoc in targetLoc_to_childLoc:
         # go to lower database use register API
@@ -67,6 +71,12 @@ def register():
 def info():
     if request.data:
         body = json.loads(request.data)
+    type = body["type"]
+    targetLoc = body["targetLoc"]
+
+    # add to type_to_targetLoc
+
+
 
     
     

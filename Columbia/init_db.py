@@ -10,7 +10,7 @@ client = MongoClient("localhost", 27017)
 db = client[DB_NAME]
 
 collection_loc_to_url = db["loc_to_url"]
-collection_loc_to_url.delete_many()
+collection_loc_to_url.delete_many({})
 collection_loc_to_url.insert_many(URLS)
 
 client.close()
