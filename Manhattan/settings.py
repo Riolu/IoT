@@ -56,6 +56,15 @@ ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 #     },
 # }
 
+schema = {
+    'loc': {
+        'type': 'string'
+    },
+    'url': {
+        'type': 'string'
+    }
+}
+
 td = {
     # 'title' tag used in item links. Defaults to the resource title minus
     # the final, plural 's' (works fine in most cases but not for 'people')
