@@ -2,6 +2,7 @@ import json
 import requests
 from eve import Eve
 from flask import Flask, redirect, url_for, request
+from pymongo import MongoClient
 
 app = Eve()
 
@@ -35,7 +36,10 @@ def register():
         body = json.loads(request.data)
     targetLoc = body["targetLoc"]
     td = body["td"]
+
+    headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     
+    requests.get(request.base_url + '/childLoc_to_url', )
     if targetLoc in childLoc_to_url:
         # use Eve to post
         url = childLoc_to_url[targetLoc] + '/td'
@@ -43,7 +47,7 @@ def register():
 
         # check whether the type is already in type_to_targetLoc
         if td["@type"] not in type_to_targetLoc:
-            pass
+            requests.post(request.host_url+"info", data=?, headers=headers)
 
     elif targetLoc in targetLoc_to_childLoc:
         # go to lower database use register API
@@ -54,14 +58,17 @@ def register():
         url = MASTER_URL + '/register'
         data = request.data
         
-    headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     requests.post(url, data=data, headers=headers)
     
     return data
 
 
-@app.route("/insertBack", methods = ['GET'])
-def insertBack():
+@app.route("/info", methods = ['POST'])
+def info():
+    if request.data:
+        body = json.loads(request.data)
+
+    
     
 
 

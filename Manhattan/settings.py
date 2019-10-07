@@ -80,6 +80,17 @@ td = {
     # 'schema': schema
 }
 
+loc_to_url = {
+    'item_title': 'loc_to_url',
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': 'loc'
+    },
+    'resource_methods': ['GET'],
+    'item_methods': ['GET']
+}
+
 DOMAIN = {
-    'td': td
+    'td': td,
+    'loc_to_url': loc_to_url
 }
