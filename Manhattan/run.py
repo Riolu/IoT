@@ -78,9 +78,11 @@ def info():
 
     host_url = request.host_url
     url = host_url + 'loc_to_url/parent'
+    print(url)
     response = requests.get(url)
     if response.status_code == 200:
         parent_url = response.json().get('url', None)
+        print(parent_url)
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         requests.put(parent_url + '/info', data=request.data, headers=headers)
 
