@@ -72,16 +72,14 @@ def info():
 
     if collection.count() == 0:
         collection.insert_one(
-            {{'type': type}, 
-            {'targetLocs': [targetLoc]}}
+            {'type': type, 
+             'targetLocs': [targetLoc]}
         )
-
     else:
         collection.update(
             {'type': type}, 
             {'$push': {'targetLocs': targetLoc}}
         )
-
     client.close()
 
     host_url = request.host_url
