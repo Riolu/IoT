@@ -70,8 +70,6 @@ def info():
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
     db_name = retrieve("self", "url", request.host_url, "loc_to_url")
-    print(db_name is None)
-    print(db_name)
     db = client[db_name]
     collection = db['type_to_targetLocs']
 
