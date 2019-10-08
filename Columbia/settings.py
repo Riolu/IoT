@@ -139,8 +139,8 @@ targetLoc_to_childLoc = {
         'url': 'regex("[\w]+")',
         'field': 'targetLoc'
     },
-    'resource_methods': ['GET'],
-    'item_methods': ['GET'],
+    'resource_methods': ['GET', 'POST'],
+    'item_methods': ['GET', 'POST'],
     'schema': targetLoc_to_childLoc_schema
 }
 
