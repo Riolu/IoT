@@ -40,7 +40,7 @@ def register():
                 "type": td["@type"],
                 "targetLoc": targetLoc
             }
-            requests.post(host_url+"info", data=info_data, headers=headers)
+            requests.put(host_url+"info", data=info_data, headers=headers)
 
     elif child_loc is not None:
         # go to lower database use register API
