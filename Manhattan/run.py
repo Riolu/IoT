@@ -40,7 +40,6 @@ def register():
                 "type": td["@type"],
                 "targetLoc": targetLoc
             }
-            print(host_url+"info")
             requests.put(host_url+"info", data=json.dumps(info_data), headers=headers)
 
     elif child_loc is not None:
@@ -81,6 +80,7 @@ def info():
     url = host_url + 'loc_to_url/parent'
     print(url)
     response = requests.get(url)
+    print(response.json())
     if response.status_code == 200:
         parent_url = response.json().get('url', None)
         print(parent_url)
