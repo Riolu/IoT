@@ -66,7 +66,7 @@ def info():
 
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
-    db = client['columbia']
+    db = client['manhattan']
     collection = db['type_to_targetLocs']
 
     collection.update(
@@ -77,11 +77,16 @@ def info():
 
     host_url = request.host_url
     url = host_url + 'loc_to_url/parent'
+    print(url)
     response = requests.get(url)
+
     if response.status_code == 200:
         parent_url = response.json().get('url', None)
-        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.put(parent_url + '/info', data=request.data, headers=headers)
+        if parent_url:
+            headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+            requests.put(parent_url + '/info', data=request.data, headers=headers)
+    
+    return {}
     
 if __name__ == '__main__':
     app.run(port=5001)

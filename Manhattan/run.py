@@ -86,6 +86,8 @@ def info():
         if parent_url:
             headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
             requests.put(parent_url + '/info', data=request.data, headers=headers)
+    
+    return {}
 
     
 if __name__ == '__main__':
