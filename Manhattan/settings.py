@@ -19,7 +19,7 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 
 # Enable reads (GET), edits (PATCH), replacements (PUT) and deletes of
 # individual items  (defaults to read-only item access).
-ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
+ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE', 'POST']
 
 # schema = {
 #     # Schema definition, based on Cerberus grammar. Check the Cerberus project
