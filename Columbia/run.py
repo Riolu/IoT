@@ -63,13 +63,14 @@ def info():
     targetLoc = body["targetLoc"]
 
     # check whether the type is already in type_to_targetLoc
-    # type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
-    # if type_locs is not None:
-    #     return {}
+    type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
+    if type_locs is not None:
+        return {}
     
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
-    db = client['columbia']
+    db_name = retrieve("self", "url", request.host_url, "loc_to_url")
+    db = client[db_name]
     collection = db['type_to_targetLocs']
 
     if collection.count() == 0:
@@ -78,17 +79,14 @@ def info():
              'targetLocs': [targetLoc]}
         )
     else:
-        requests.put(request.host_url, data=json.dumps(
-            {'type': type, '$push': {'targetLocs': targetLoc}}), headers={'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'})
-        # collection.update(
-        #     {'type': type}, 
-        #     {'$push': {'targetLocs': targetLoc}}
-        # )
+        collection.update(
+            {'type': type}, 
+            {'$push': {'targetLocs': targetLoc}}
+        )
     client.close()
 
     host_url = request.host_url
     url = host_url + 'loc_to_url/parent'
-    print(url)
     response = requests.get(url)
 
     if response.status_code == 200:

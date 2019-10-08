@@ -3,7 +3,8 @@ from pymongo import MongoClient
 DB_NAME = "columbia"
 URLS = [
     {"loc": "master", "url": "http://localhost:5000"},
-    {"loc": "parent", "url": "http://localhost:5000"}
+    {"loc": "parent", "url": "http://localhost:5000"},
+    {"loc": "self", "url": "columbia"}
 ]
 
 client = MongoClient("localhost", 27017)

@@ -69,7 +69,8 @@ def info():
     
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
-    db = client['manhattan']
+    db_name = retrieve("self", "url", request.host_url, "loc_to_url")
+    db = client[db_name]
     collection = db['type_to_targetLocs']
 
     if collection.count() == 0:
@@ -86,7 +87,6 @@ def info():
 
     host_url = request.host_url
     url = host_url + 'loc_to_url/parent'
-    print(url)
     response = requests.get(url)
 
     if response.status_code == 200:
