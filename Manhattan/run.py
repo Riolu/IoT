@@ -24,8 +24,6 @@ def register():
 
     host_url = request.host_url
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-
-    print(host_url)
     
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
     child_loc = retrieve(targetLoc, "targetLoc", host_url, "targetLoc_to_childLoc")
@@ -34,6 +32,11 @@ def register():
         # use Eve to post
         url = child_url + '/td'
         data = json.dumps(td)
+
+        print(url)
+        print(data)
+
+        
 
         # check whether the type is already in type_to_targetLoc
         # type_locs = retrieve(td["@type"], "targetLocs", host_url, "type_to_targetLoc")
