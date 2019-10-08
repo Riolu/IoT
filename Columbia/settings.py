@@ -140,7 +140,7 @@ targetLoc_to_childLoc = {
         'field': 'targetLoc'
     },
     'resource_methods': ['GET', 'POST'],
-    'item_methods': ['GET', 'POST'],
+    'item_methods': ['GET', 'PUT'],
     'schema': targetLoc_to_childLoc_schema
 }
 
