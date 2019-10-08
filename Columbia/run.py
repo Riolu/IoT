@@ -58,7 +58,7 @@ def register():
     return data
 
 
-@app.route("/info", methods = ['POST'])
+@app.route("/info", methods = ['PUT'])
 def info():
     if request.data:
         body = json.loads(request.data)
@@ -82,7 +82,7 @@ def info():
     if response.status_code == 200:
         parent_url = response.json().get('url', None)
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(parent_url + '/info', data=request.data, headers=headers)
+        requests.put(parent_url + '/info', data=request.data, headers=headers)
     
 if __name__ == '__main__':
     app.run(port=5001)
