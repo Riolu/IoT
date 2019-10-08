@@ -67,8 +67,8 @@ def info():
 
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
-    db = client['manhattan']
-    collection = db['loc_to_url']
+    db = client['columbia']
+    collection = db['type_to_targetLocs']
 
     collection.update(
         {'type': type}, 
