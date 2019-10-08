@@ -65,7 +65,7 @@ def info():
     # check whether the type is already in type_to_targetLoc
     type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
     if type_locs is not None:
-        return
+        return {}
     
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
