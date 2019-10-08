@@ -78,10 +78,13 @@ def info():
              'targetLocs': [targetLoc]}
         )
     else:
-        collection.update(
-            {'type': type}, 
-            {'$push': {'targetLocs': targetLoc}}
-        )
+        requests.put(request.host_url, data=json.dumps(
+            {{'type': type}, 
+            {'$push': {'targetLocs': targetLoc}}}, headers={'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}))
+        # collection.update(
+        #     {'type': type}, 
+        #     {'$push': {'targetLocs': targetLoc}}
+        # )
     client.close()
 
     host_url = request.host_url
