@@ -40,6 +40,7 @@ def register():
                 "type": td["@type"],
                 "targetLoc": targetLoc
             }
+            print(host_url+"info")
             requests.put(host_url+"info", data=json.dumps(info_data), headers=headers)
 
     elif child_loc is not None:
