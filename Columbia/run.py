@@ -33,14 +33,13 @@ def register():
         data = json.dumps(td)
 
         # check whether the type is already in type_to_targetLoc
-        
-        # type_locs = retrieve(td["@type"], "targetLocs", host_url, "type_to_targetLoc")
-        # if type_locs is None:
-        #     info_data = {
-        #         "type": td["@type"],
-        #         "targetLoc": targetLoc
-        #     }
-        #     requests.post(host_url+"info", data=info_data, headers=headers)
+        type_locs = retrieve(td["@type"], "targetLocs", host_url, "type_to_targetLoc")
+        if type_locs is None:
+            info_data = {
+                "type": td["@type"],
+                "targetLoc": targetLoc
+            }
+            requests.post(host_url+"info", data=info_data, headers=headers)
 
     elif child_loc is not None:
         # go to lower database use register API
