@@ -77,11 +77,7 @@ td = {
     # most global settings can be overridden at resource level
     'resource_methods': ['GET', 'POST'],
 
-    'schema': {
-        'title': {
-            'type': 'string'
-        }
-    }
+    # 'schema': schema
 }
 
 loc_to_url_schema = {
