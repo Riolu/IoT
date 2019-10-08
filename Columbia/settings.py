@@ -120,7 +120,7 @@ type_to_targetLocs = {
         'field': 'type'
     },
     'resource_methods': ['GET', 'POST'],
-    'item_methods': ['GET', 'POST'],
+    'item_methods': ['GET', 'PUT'],
     'schema': type_to_targetLocs_schema
 }
 
