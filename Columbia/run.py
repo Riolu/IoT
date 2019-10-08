@@ -2,6 +2,7 @@ import json
 import requests
 from eve import Eve
 from flask import Flask, redirect, url_for, request
+from pymongo import MongoClient
 
 app = Eve()
 
@@ -68,7 +69,7 @@ def info():
     
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
-    db = client['manhattan']
+    db = client['columbia']
     collection = db['type_to_targetLocs']
 
     if collection.count() == 0:
