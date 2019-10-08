@@ -24,6 +24,8 @@ def register():
 
     host_url = request.host_url
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+
+    print(host_url)
     
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
     child_loc = retrieve(targetLoc, "targetLoc", host_url, "targetLoc_to_childLoc")
