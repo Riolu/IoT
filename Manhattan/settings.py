@@ -56,15 +56,6 @@ ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
 #     },
 # }
 
-schema = {
-    'loc': {
-        'type': 'string'
-    },
-    'url': {
-        'type': 'string'
-    }
-}
-
 td = {
     # 'title' tag used in item links. Defaults to the resource title minus
     # the final, plural 's' (works fine in most cases but not for 'people')
@@ -89,6 +80,16 @@ td = {
     # 'schema': schema
 }
 
+
+loc_to_url_schema = {
+    'loc': {
+        'type': 'string'
+    },
+    'url': {
+        'type': 'string'
+    }
+}
+
 loc_to_url = {
     'item_title': 'loc_to_url',
     'additional_lookup': {
@@ -97,10 +98,52 @@ loc_to_url = {
     },
     'resource_methods': ['GET'],
     'item_methods': ['GET'],
-    'schema': schema
+    'schema': loc_to_url_schema
+}
+
+type_to_targetLocs_schema = {
+    'type': {
+        'type': 'string'
+    },
+    'targetLocs': {
+        'type': 'list'
+    }
+}
+
+type_to_targetLocs = {
+    'item_title': 'type_to_targetLocs',
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': 'type'
+    },
+    'resource_methods': ['GET', 'POST'],
+    'item_methods': ['GET', 'POST'],
+    'schema': type_to_targetLocs_schema
+}
+
+targetLoc_to_childLoc_schema = {
+    'targetLoc': {
+        'type': 'string'
+    },
+    'childLoc': {
+        'type': 'string'
+    }
+}
+
+targetLoc_to_childLoc = {
+    'item_title': 'targetLoc_to_childLoc',
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': 'targetLoc'
+    },
+    'resource_methods': ['GET'],
+    'item_methods': ['GET'],
+    'schema': targetLoc_to_childLoc_schema
 }
 
 DOMAIN = {
     'td': td,
-    'loc_to_url': loc_to_url
+    'loc_to_url': loc_to_url,
+    'type_to_targetLocs': type_to_targetLocs,
+    'targetLoc_to_childLoc': targetLoc_to_childLoc
 }

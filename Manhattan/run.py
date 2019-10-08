@@ -25,37 +25,47 @@ targetLoc_to_childLoc = dict()
 # type -> list of loc nodes
 type_to_targetLoc = dict()
 
+def retrieve(key, field, baseUrl, tableName):
+    url = '/'.join([baseUrl, tableName, key])
+    response = requests.get(url)
 
-@app.route("/exp")
-def get_exp():
-    return "hello world"
+    if response.status_code == 200:
+        return response.json().get(field, None)
+    else:
+        return None
 
-@app.route("/register", methods = ['POST'])
+@app.route('/register', methods = ['POST'])
 def register():
     if request.data:
         body = json.loads(request.data)
-    targetLoc = body["targetLoc"]
+    targetLoc = body['targetLoc']
     td = body["td"]
 
+    host_url = request.host_url
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     
-    requests.get(request.base_url + '/childLoc_to_url', )
-    if targetLoc in childLoc_to_url:
+    child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
+    child_loc = retrieve(targetLoc, "targetLoc", host_url, "targetLoc_to_childLoc")
+    
+    if child_url is not None:
         # use Eve to post
-        url = childLoc_to_url[targetLoc] + '/td'
+        url = child_url + '/td'
         data = json.dumps(td)
 
         # check whether the type is already in type_to_targetLoc
-        if td["@type"] not in type_to_targetLoc:
+        
+        type_locs = retrieve(td["@type"], "targetLocs", host_url, "type_to_targetLoc")
+        if type_locs is None:
             info_data = {
                 "type": td["@type"],
                 "targetLoc": targetLoc
             }
-            requests.post(request.host_url+"info", data=info_data, headers=headers)
+            requests.post(host_url+"info", data=info_data, headers=headers)
 
-    elif targetLoc in targetLoc_to_childLoc:
+    elif child_loc is not None:
         # go to lower database use register API
-        url = childLoc_to_url[targetLoc_to_childLoc(targetLoc)] + '/register'
+        child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+        url = child_url + '/register'
         data = request.data
     else:
         # go to master database use register API
@@ -75,6 +85,23 @@ def info():
     targetLoc = body["targetLoc"]
 
     # add to type_to_targetLoc
+    client = MongoClient('localhost', 27017)
+    db = client['manhattan']
+    collection = db['loc_to_url']
+
+    collection.update(
+        {'type': type}, 
+        {'$push': {'targetLocs': targetLoc}}
+    )
+    client.close()
+
+    host_url = request.host_url
+    url = host_url + 'loc_to_url/parent'
+    response = requests.get(url)
+    if response.status_code == 200:
+        parent_url = response.json().get('url', None)
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        requests.post(parent_url + '/info', data=request.data, headers=headers)
 
 
 
