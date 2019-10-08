@@ -4,7 +4,8 @@ DB_NAME = "manhattan"
 URLS = [
     {"loc": "master", "url": "http://localhost:5000"},
     {"loc": "parent", "url": ""},
-    {"loc": "columbia", "url": "http://localhost:5001"}
+    {"loc": "columbia", "url": "http://localhost:5001"},
+    {"loc": "self", "url": "manhattan"}
 ]
 
 client = MongoClient("localhost", 27017)
