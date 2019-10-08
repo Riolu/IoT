@@ -33,14 +33,11 @@ def register():
         url = child_url + '/td'
         data = json.dumps(td)
 
-        # check whether the type is already in type_to_targetLoc
-        type_locs = retrieve(td["@type"], "targetLocs", host_url, "type_to_targetLoc")
-        if type_locs is None:
-            info_data = {
-                "type": td["@type"],
-                "targetLoc": targetLoc
-            }
-            requests.put(host_url+"info", data=json.dumps(info_data), headers=headers)
+        info_data = {
+            "type": td["@type"],
+            "targetLoc": targetLoc
+        }
+        requests.put(child_url+"/info", data=json.dumps(info_data), headers=headers)
 
     elif child_loc is not None:
         # go to lower database use register API
@@ -65,6 +62,11 @@ def info():
     type = body["type"]
     targetLoc = body["targetLoc"]
 
+    # check whether the type is already in type_to_targetLoc
+    type_locs = retrieve(type, "targetLocs", requests.host_url, "type_to_targetLoc")
+    if type_locs is not None:
+        return
+    
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
     db = client['manhattan']
