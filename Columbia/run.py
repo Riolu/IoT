@@ -79,8 +79,7 @@ def info():
         )
     else:
         requests.put(request.host_url, data=json.dumps(
-            {{'type': type}, 
-            {'$push': {'targetLocs': targetLoc}}}), headers={'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'})
+            {'type': type, '$push': {'targetLocs': targetLoc}}), headers={'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'})
         # collection.update(
         #     {'type': type}, 
         #     {'$push': {'targetLocs': targetLoc}}
