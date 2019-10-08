@@ -63,7 +63,7 @@ def info():
     targetLoc = body["targetLoc"]
 
     # check whether the type is already in type_to_targetLoc
-    type_locs = retrieve(type, "targetLocs", requests.host_url, "type_to_targetLoc")
+    type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLoc")
     if type_locs is not None:
         return
     
