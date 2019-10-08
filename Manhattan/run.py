@@ -7,7 +7,7 @@ from pymongo import MongoClient
 app = Eve()
 
 def retrieve(key, field, baseUrl, tableName):
-    url = '/'.join([baseUrl, tableName, key])
+    url = baseUrl + tableName + '/' + key
     response = requests.get(url)
 
     if response.status_code == 200:
