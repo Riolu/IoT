@@ -100,7 +100,6 @@ def info():
     
     return {}
 
-
 # search by type at a certain loc
 @app.route("/searchAtLoc", methods = ['GET'])
 def searchAtLoc():
@@ -110,8 +109,7 @@ def searchAtLoc():
 
     if len(type_locs) == 0:
         # use Eve to get
-        url = request.host_url + '/td'
-        # TODO: get target type instead of all the types
+        url = request.host_url + '/td/' + type
         return requests.get(url, headers=headers)
 
     child_url_set = set()
@@ -122,7 +120,12 @@ def searchAtLoc():
     
     result_list = list()
     for child_url in child_url_set:
-        result_list.append(requests.get(child_url+'/searchAtLoc', headers=headers))
+        result_list.append(json.loads(requests.get(
+            child_url+'/searchAtLoc', 
+            params={
+                'type': type
+            }, 
+            headers=headers)))
     
     return json.dumps(result_list)
 
