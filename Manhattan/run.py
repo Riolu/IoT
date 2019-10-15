@@ -128,8 +128,7 @@ def searchAtLoc():
             child_url+'/searchAtLoc', 
             params={
                 'type': type
-            }, 
-            headers=headers)))
+            })))
     
     return json.dumps(result_list)
 
