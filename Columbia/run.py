@@ -108,6 +108,7 @@ def searchAtLoc():
     type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
 
     if len(type_locs) == 0:
+        print("lalala")
         # use Eve to get
         url = request.host_url + '/td/' + type
         return requests.get(url)
