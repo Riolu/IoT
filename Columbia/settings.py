@@ -67,7 +67,7 @@ td = {
     # GET requests at '/people/<lastname>'.
     'additional_lookup': {
         'url': 'regex("[\w]+")',
-        'field': '@type'
+        'field': '\@type'
     },
 
     # We choose to override global cache-control directives for this resource.
