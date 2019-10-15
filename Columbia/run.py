@@ -114,9 +114,13 @@ def searchAtLoc():
 
     child_url_set = set()
     for target_loc in type_locs:
-        child_loc = retrieve(target_loc, "targetLoc", request.host_url, "targetLoc_to_childLoc")
-        child_url = retrieve(child_loc, "url", request.host_url, "loc_to_url")
-        child_url_set.add(child_url)
+        target_url = retrieve(target_loc, "url", request.host_url, "loc_to_url")
+        if target_url:
+            child_url_set.add(target_url)
+        else:
+            child_loc = retrieve(target_loc, "targetLoc", request.host_url, "targetLoc_to_childLoc")
+            child_url = retrieve(child_loc, "url", request.host_url, "loc_to_url")
+            child_url_set.add(child_url)
     
     result_list = list()
     for child_url in child_url_set:
