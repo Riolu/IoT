@@ -34,7 +34,7 @@ def register():
         data = json.dumps(td)
 
         info_data = {
-            "type": td["@type"],
+            "type": td["_type"],
             "targetLoc": targetLoc
         }
         requests.put(child_url+"/info", data=json.dumps(info_data), headers=headers)

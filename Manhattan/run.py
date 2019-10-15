@@ -15,6 +15,9 @@ def retrieve(key, field, baseUrl, tableName):
     else:
         return None
 
+def getSelfName(baseUrl):
+    return retrieve('self', 'url', baseUrl, 'loc_to_url')
+
 @app.route('/register', methods = ['POST'])
 def register():
     if request.data:
@@ -69,7 +72,7 @@ def info():
     
     # add to type_to_targetLoc
     client = MongoClient('localhost', 27017)
-    db_name = retrieve("self", "url", request.host_url, "loc_to_url")
+    db_name = getSelfName(request.host_url)
     db = client[db_name]
     collection = db['type_to_targetLocs']
 
@@ -96,6 +99,73 @@ def info():
             requests.put(parent_url + '/info', data=request.data, headers=headers)
     
     return {}
+
+
+# search by type at a certain loc
+@app.route("/searchAtLoc", methods = ['GET'])
+def searchAtLoc():
+    type = request.args.get("type")
+
+    type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
+
+    if len(type_locs) == 0:
+        # use Eve to get
+        url = request.host_url + '/td'
+        # TODO: get target type instead of all the types
+        return requests.get(url, headers=headers)
+
+    child_url_set = set()
+    for target_loc in type_locs:
+        child_loc = retrieve(target_loc, "targetLoc", request.host_url, "targetLoc_to_childLoc")
+        child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+        child_url_set.add(child_url)
+    
+    result_list = list()
+    for child_url in child_url_set:
+        result_list.append(requests.get(child_url+'/searchAtLoc', headers=headers))
+    
+    return json.dumps(result_list)
+
+
+@app.route("/searchByLocType", methods = ['GET'])
+def searchByLocType():
+    loc = request.args.get('loc')
+    type = request.args.get('type')
+
+    host_url = request.host_url
+    headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+    
+    self_loc = getSelfName(host_url)
+    child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
+    child_loc = retrieve(targetLoc, "targetLoc", host_url, "targetLoc_to_childLoc")
+
+    if self_loc == loc or target_url is not None:
+        target_url = host_url if self_loc==loc else target_url
+        response = requests.get(
+            target_url + 'searchAtLoc',
+            params={
+                'type': type
+            },
+            headers=headers
+        )
+    else:
+        target_url = retrieve(
+            child_loc if child_loc is not None else 'master',
+            "url",
+            host_url,
+            "loc_to_url"
+        )
+        response = requests.get(
+            target_url + 'searchByLocType',
+            params={
+                'loc': loc,
+                'type': type
+            },
+            headers=headers
+        )
+
+    return response.data
+
 
     
 if __name__ == '__main__':
