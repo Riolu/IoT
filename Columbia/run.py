@@ -103,9 +103,9 @@ def info():
 # search by type at a certain loc
 @app.route("/searchAtLoc", methods = ['GET'])
 def searchAtLoc():
-    _type = request.args.get("_")
-    print(_type)
-    print(type(_type))
+    type = request.args.get("type")
+    print(type)
+    print(type(type))
 
     type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
 

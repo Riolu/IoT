@@ -126,9 +126,8 @@ def searchAtLoc():
     for child_url in child_url_set:
         result_list.append(json.loads(requests.get(
             child_url+'/searchAtLoc', 
-            params={
-                'type': type
-            })))
+            params={'type': str(type)}
+            )))
     
     return json.dumps(result_list)
 
