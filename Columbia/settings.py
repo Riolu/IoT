@@ -66,8 +66,8 @@ td = {
     # additional read-only entry point. This way consumers can also perform
     # GET requests at '/people/<lastname>'.
     'additional_lookup': {
-        'url': 'regex("[\w]+")',
-        'field': '\\@type'
+        'url': 'regex("[\w@]+")',
+        'field': '@type'
     },
 
     # We choose to override global cache-control directives for this resource.
