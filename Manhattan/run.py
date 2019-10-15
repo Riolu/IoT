@@ -110,7 +110,7 @@ def searchAtLoc():
     if len(type_locs) == 0:
         # use Eve to get
         url = request.host_url + '/td/' + type
-        return requests.get(url, headers=headers)
+        return requests.get(url)
 
     child_url_set = set()
     for target_loc in type_locs:
