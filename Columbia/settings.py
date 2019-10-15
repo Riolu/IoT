@@ -78,7 +78,7 @@ td = {
     'resource_methods': ['GET', 'POST'],
 
     'schema': {
-        '@type': {
+        '_type': {
             'type': 'string'
         }
     }
