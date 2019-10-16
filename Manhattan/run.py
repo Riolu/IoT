@@ -122,7 +122,7 @@ def searchAtLoc():
         if target_url:
             child_url_set.add(target_url)
         else:
-            child_loc = retrieve(target_loc, "targetLoc", request.host_url, "targetLoc_to_childLoc")
+            child_loc = retrieve(target_loc, "childLoc", request.host_url, "targetLoc_to_childLoc")
             child_url = retrieve(child_loc, "url", request.host_url, "loc_to_url")
             child_url_set.add(child_url)
     

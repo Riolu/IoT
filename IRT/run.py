@@ -28,9 +28,11 @@ def register():
     host_url = request.host_url
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     
+    self_loc = getSelfName(host_url)
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
     child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
     
+    # if self_loc == targetLoc
     if child_url is not None:
         # use Eve to post
         url = child_url + '/td'
@@ -122,7 +124,7 @@ def searchAtLoc():
         if target_url:
             child_url_set.add(target_url)
         else:
-            child_loc = retrieve(target_loc, "targetLoc", request.host_url, "targetLoc_to_childLoc")
+            child_loc = retrieve(target_loc, "childLoc", request.host_url, "targetLoc_to_childLoc")
             child_url = retrieve(child_loc, "url", request.host_url, "loc_to_url")
             child_url_set.add(child_url)
     
