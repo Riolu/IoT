@@ -28,9 +28,11 @@ def register():
     host_url = request.host_url
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     
+    self_loc = getSelfName(host_url)
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
     child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
-   
+    
+    # if self_loc == targetLoc
     if child_url is not None:
         # use Eve to post
         url = child_url + '/td'
@@ -147,20 +149,19 @@ def searchByLocType():
         target_url = host_url if self_loc==loc else target_url+'/'
         response = requests.get(target_url + 'searchAtLoc?type='+type)
     else:
-        master_url = retrieve("master", "url", host_url, "loc_to_url")
-        if host_url == master_url+'/':
-            return {}
-        
-        target_url = retrieve(
-            child_loc if child_loc is not None else 'master',
-            "url",
-            host_url,
-            "loc_to_url"
-        )
+        if child_loc is not None:
+            child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+            target_url = child_url
+        else:
+            master_url = retrieve("master", "url", host_url, "loc_to_url")
+            if host_url == master_url+'/':
+                return {}
+            target_url = master_url
         response = requests.get(target_url + '/searchByLocType?loc={}&type={}'.format(loc, type))
 
     return json.dumps(response.json())
 
+   
 
     
 if __name__ == '__main__':
