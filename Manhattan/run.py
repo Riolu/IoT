@@ -127,7 +127,7 @@ def searchAtLoc():
     for child_url in child_url_set:
         result_list.extend(requests.get(child_url+'/searchAtLoc?type='+type).json())
     
-    return result_list
+    return json.dumps(result_list)
 
 
 @app.route("/searchByLocType", methods = ['GET'])
