@@ -113,7 +113,7 @@ def searchAtLoc():
     result_list = list()
     if self_name in type_locs:
         # use Eve to get
-        url = request.host_url + '/td/' + type
+        url = request.host_url + 'td/' + type
         result_list += requests.get(url).json()
         type_locs.remove(self_name)
 
