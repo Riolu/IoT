@@ -105,6 +105,7 @@ def info():
 @app.route("/searchAtLoc", methods = ['GET'])
 def searchAtLoc():
     type = request.args.get("type")
+    print(type)
 
     type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
 
@@ -127,7 +128,7 @@ def searchAtLoc():
     for child_url in child_url_set:
         result_list.append(json.loads(requests.get(
             child_url+'/searchAtLoc', 
-            params=json.dumps({'type': type})
+            params={'type': type}
             )))
     
     return json.dumps(result_list)
