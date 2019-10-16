@@ -145,6 +145,10 @@ def searchByLocType():
         target_url = host_url if self_loc==loc else target_url+'/'
         response = requests.get(target_url + 'searchAtLoc?type='+type)
     else:
+        master_url = retrieve("master", "url", host_url, "loc_to_url")
+        if host_url == master_url+'/':
+            return {}
+        
         target_url = retrieve(
             child_loc if child_loc is not None else 'master',
             "url",
