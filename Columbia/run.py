@@ -153,7 +153,7 @@ def searchByLocType():
         )
         response = requests.get(target_url + '/searchByLocType?loc={}&type={}'.format(loc, type))
 
-    return response.json()
+    return response
 
 
     
