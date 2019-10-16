@@ -76,15 +76,16 @@ def info():
     db = client[db_name]
     collection = db['type_to_targetLocs']
 
-    if collection.count() == 0:
-        collection.insert_one(
-            {'type': type, 
-             'targetLocs': [targetLoc]}
-        )
-    else:
+    
+    if collection.find_one({'type': type}) is not None:
         collection.update(
             {'type': type}, 
             {'$push': {'targetLocs': targetLoc}}
+        )
+    else:
+        collection.insert_one(
+            {'type': type, 
+             'targetLocs': [targetLoc]}
         )
     client.close()
 
