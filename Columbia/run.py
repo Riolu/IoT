@@ -109,10 +109,13 @@ def searchAtLoc():
     type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
     print(type_locs)
 
-    if len(type_locs) == 0:
+    self_name = getSelfName(request.host_url)
+    result_list = list()
+    if self_name in type_locs:
         # use Eve to get
         url = request.host_url + '/td/' + type
-        return requests.get(url)
+        result_list += requests.get(url).json()
+        type_locs.remove(self_name)
 
     child_url_set = set()
     for target_loc in type_locs:
@@ -124,7 +127,6 @@ def searchAtLoc():
             child_url = retrieve(child_loc, "url", request.host_url, "loc_to_url")
             child_url_set.add(child_url)
     
-    result_list = list()
     for child_url in child_url_set:
         result_list.append(json.loads(requests.get(
             child_url+'/searchAtLoc?type='+type
