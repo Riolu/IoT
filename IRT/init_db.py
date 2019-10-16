@@ -1,11 +1,10 @@
 from pymongo import MongoClient
 
-DB_NAME = "columbia"
+DB_NAME = "irt"
 URLS = [
     {"loc": "master", "url": "http://localhost:5000"},
-    {"loc": "parent", "url": "http://localhost:5000"},
-    {"loc": "irt", "url": "http://localhost:5002"}
-    {"loc": "self", "url": "columbia"}
+    {"loc": "parent", "url": "http://localhost:5001"},
+    {"loc": "self", "url": "irt"}
 ]
 
 client = MongoClient("localhost", 27017)

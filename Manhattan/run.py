@@ -50,6 +50,8 @@ def register():
     else:
         # go to master database use register API
         master_url = retrieve("master", "url", host_url, "loc_to_url")
+        if master_url+'/' == host_url:
+            return {}
         url = master_url + '/register'
         data = request.data
         
