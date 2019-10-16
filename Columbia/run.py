@@ -104,22 +104,15 @@ def info():
 @app.route("/searchAtLoc", methods = ['GET'])
 def searchAtLoc():
     type = request.args.get("type")
-    print(type)
-
     type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
-    print(type_locs)
 
     self_name = getSelfName(request.host_url)
     result_list = list()
     if self_name in type_locs:
         # use Eve to get
         url = request.host_url + 'td?where=_type=="{}"'.format(type)
-        print(requests.get(url).json())
         result_list += requests.get(url).json()['_items']
         type_locs.remove(self_name)
-    
-    print(result_list)  
-    print(type_locs)
     
     child_url_set = set()
     for target_loc in type_locs:
@@ -132,10 +125,8 @@ def searchAtLoc():
             child_url_set.add(child_url)
     
     for child_url in child_url_set:
-        print(requests.get(child_url+'/searchAtLoc?type='+type).json())
         result_list.extend(requests.get(child_url+'/searchAtLoc?type='+type).json())
     
-    print(result_list)
     return json.dumps(result_list)
 
 
