@@ -136,7 +136,6 @@ def searchByLocType():
     type = request.args.get('type')
 
     host_url = request.host_url
-    headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     
     self_loc = getSelfName(host_url)
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
@@ -144,13 +143,7 @@ def searchByLocType():
 
     if self_loc == loc or target_url is not None:
         target_url = host_url if self_loc==loc else target_url
-        response = requests.get(
-            target_url + 'searchAtLoc',
-            params={
-                'type': type
-            },
-            headers=headers
-        )
+        response = requests.get(target_url + 'searchAtLoc?type='+type)
     else:
         target_url = retrieve(
             child_loc if child_loc is not None else 'master',
@@ -158,16 +151,9 @@ def searchByLocType():
             host_url,
             "loc_to_url"
         )
-        response = requests.get(
-            target_url + 'searchByLocType',
-            params={
-                'loc': loc,
-                'type': type
-            },
-            headers=headers
-        )
+        response = requests.get(target_url + 'searchByLocType?loc={}&type={}'.format(loc, type))
 
-    return response.data
+    return response.json()
 
 
     
