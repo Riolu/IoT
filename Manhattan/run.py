@@ -152,7 +152,6 @@ def searchByLocType():
         if child_loc is not None:
             child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
             target_url = child_url
-            print(target_url)
         else:
             master_url = retrieve("master", "url", host_url, "loc_to_url")
             if host_url == master_url+'/':
