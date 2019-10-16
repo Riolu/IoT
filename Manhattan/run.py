@@ -76,7 +76,6 @@ def info():
     db = client[db_name]
     collection = db['type_to_targetLocs']
 
-    
     if collection.find_one({'type': type}) is not None:
         collection.update(
             {'type': type}, 
@@ -114,12 +113,14 @@ def searchAtLoc():
     result_list = list()
     if self_name in type_locs:
         # use Eve to get
-        url = request.host_url + 'td/' + type
+        url = request.host_url + 'td?where=_type=="{}"'.format(type)
         print(requests.get(url).json())
-        result_list += requests.get(url).json()
+        result_list += requests.get(url).json()['_items']
         type_locs.remove(self_name)
-        print(result_list)
-
+    
+    print(result_list)  
+    print(type_locs)
+    
     child_url_set = set()
     for target_loc in type_locs:
         target_url = retrieve(target_loc, "url", request.host_url, "loc_to_url")

@@ -76,15 +76,15 @@ def info():
     db = client[db_name]
     collection = db['type_to_targetLocs']
 
-    if collection.count() == 0:
-        collection.insert_one(
-            {'type': type, 
-             'targetLocs': [targetLoc]}
-        )
-    else:
+    if collection.find_one({'type': type}) is not None:
         collection.update(
             {'type': type}, 
             {'$push': {'targetLocs': targetLoc}}
+        )
+    else:
+        collection.insert_one(
+            {'type': type, 
+             'targetLocs': [targetLoc]}
         )
     client.close()
 
@@ -113,9 +113,9 @@ def searchAtLoc():
     result_list = list()
     if self_name in type_locs:
         # use Eve to get
-        url = request.host_url + 'td/' + type
+        url = request.host_url + 'td?where=_type=="{}"'.format(type)
         print(requests.get(url).json())
-        result_list += requests.get(url).json()
+        result_list += requests.get(url).json()['_items']
         type_locs.remove(self_name)
     
     print(result_list)  
