@@ -118,6 +118,7 @@ def searchAtLoc():
         print(requests.get(url).json())
         result_list += requests.get(url).json()
         type_locs.remove(self_name)
+        print(result_list)
 
     child_url_set = set()
     for target_loc in type_locs:
@@ -131,8 +132,9 @@ def searchAtLoc():
     
     for child_url in child_url_set:
         print(requests.get(child_url+'/searchAtLoc?type='+type).json())
-        result_list.append(requests.get(child_url+'/searchAtLoc?type='+type).json())
+        result_list.extend(requests.get(child_url+'/searchAtLoc?type='+type).json())
     
+    print(result_list)
     return json.dumps(result_list)
 
 
