@@ -117,8 +117,8 @@ def searchAtLoc():
         print(requests.get(url).json())
         result_list += requests.get(url).json()
         type_locs.remove(self_name)
-        print(result_list)
-
+    
+    print(result_list)  
     print(type_locs)
     
     child_url_set = set()
