@@ -143,7 +143,7 @@ def searchByLocType():
     
     self_loc = getSelfName(host_url)
     target_url = retrieve(loc, "url", host_url, "loc_to_url")
-    child_loc = retrieve(loc, "targetLoc", host_url, "targetLoc_to_childLoc")
+    child_loc = retrieve(loc, "childLoc", host_url, "targetLoc_to_childLoc")
 
     if self_loc == loc or target_url is not None:
         target_url = host_url if self_loc==loc else target_url+'/'
