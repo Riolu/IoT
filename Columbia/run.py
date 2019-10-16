@@ -138,7 +138,7 @@ def searchByLocType():
     host_url = request.host_url
     
     self_loc = getSelfName(host_url)
-    child_url = retrieve(loc, "url", host_url, "loc_to_url")
+    target_url = retrieve(loc, "url", host_url, "loc_to_url")
     child_loc = retrieve(loc, "targetLoc", host_url, "targetLoc_to_childLoc")
 
     if self_loc == loc or target_url is not None:
