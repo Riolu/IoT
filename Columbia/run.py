@@ -142,7 +142,7 @@ def searchByLocType():
     child_loc = retrieve(loc, "targetLoc", host_url, "targetLoc_to_childLoc")
 
     if self_loc == loc or target_url is not None:
-        target_url = host_url if self_loc==loc else target_url
+        target_url = host_url if self_loc==loc else target_url+'/'
         response = requests.get(target_url + '/searchAtLoc?type='+type)
     else:
         target_url = retrieve(
