@@ -30,7 +30,7 @@ def register():
     
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
     child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
-    
+   
     if child_url is not None:
         # use Eve to post
         url = child_url + '/td'

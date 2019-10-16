@@ -10,7 +10,7 @@ MONGO_PORT = 27017
 # needed if --auth mode is enabled.
 # MONGO_AUTH_SOURCE = '<dbname>'
 
-MONGO_DBNAME = 'manhattan'
+MONGO_DBNAME = 'irt'
 
 # Enable reads (GET), inserts (POST) and DELETE for resources/collections
 # (if you omit this line, the API will default to ['GET'] and provide
