@@ -119,6 +119,8 @@ def searchAtLoc():
         type_locs.remove(self_name)
         print(result_list)
 
+    print(type_locs)
+    
     child_url_set = set()
     for target_loc in type_locs:
         target_url = retrieve(target_loc, "url", request.host_url, "loc_to_url")
