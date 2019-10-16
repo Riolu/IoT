@@ -44,7 +44,7 @@ def register():
 
     elif child_loc is not None:
         # go to lower database use register API
-        child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+        child_url = retrieve(child_loc, "url", host_url, "targetLoc_to_childLoc")
         url = child_url + '/register'
         data = request.data
     else:
