@@ -4,7 +4,7 @@ DB_NAME = "columbia"
 URLS = [
     {"loc": "master", "url": "http://localhost:5000"},
     {"loc": "parent", "url": "http://localhost:5000"},
-    {"loc": "irt", "url": "http://localhost:5002"}
+    {"loc": "irt", "url": "http://localhost:5002"},
     {"loc": "self", "url": "columbia"}
 ]
 
