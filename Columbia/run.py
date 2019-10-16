@@ -29,7 +29,7 @@ def register():
     headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
     
     child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
-    child_loc = retrieve(targetLoc, "targetLoc", host_url, "targetLoc_to_childLoc")
+    child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
     
     if child_url is not None:
         # use Eve to post
@@ -44,7 +44,7 @@ def register():
 
     elif child_loc is not None:
         # go to lower database use register API
-        child_url = retrieve(child_loc, "url", host_url, "targetLoc_to_childLoc")
+        child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
         url = child_url + '/register'
         data = request.data
     else:
