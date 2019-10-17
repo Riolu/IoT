@@ -2,8 +2,8 @@ from pymongo import MongoClient
 
 DB_NAME = "cs"
 URLS = [
-    {"loc": "master", "url": "http://localhost:5000"},
-    {"loc": "parent", "url": "http://localhost:5001"},
+    {"loc": "master", "url": "http://192.168.1.189:5000"},
+    {"loc": "parent", "url": "http://192.168.1.156:5001"},
     {"loc": "self", "url": "cs"}
 ]
 

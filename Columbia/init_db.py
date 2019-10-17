@@ -2,11 +2,11 @@ from pymongo import MongoClient
 
 DB_NAME = "columbia"
 URLS = [
-    {"loc": "master", "url": "http://localhost:5000"},
-    {"loc": "parent", "url": "http://localhost:5000"},
+    {"loc": "master", "url": "http://192.168.1.189:5000"},
+    {"loc": "parent", "url": "http://192.168.1.189:5000"},
     {"loc": "self", "url": "columbia"},
-    {"loc": "irt", "url": "http://localhost:5002"},
-    {"loc": "cs", "url": "http://localhost:5003"}
+    {"loc": "irt", "url": "http://192.168.1.156:5002"},
+    {"loc": "cs", "url": "http://192.168.1.156:5003"}
 ]
 
 client = MongoClient("localhost", 27017)
