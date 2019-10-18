@@ -79,12 +79,15 @@ def getApp(dbname):
     def registerInfo():
         if request.data:
             body = json.loads(request.data)
-        type = body["type"]
+        _type = body["type"]
         targetLoc = body["targetLoc"]
 
         # check whether the type is already in type_to_targetLoc
-        type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
+        type_locs = retrieve(_type, "targetLocs", request.host_url, "type_to_targetLocs")
+        print(targetLoc)
+        print(type(targetLoc))
         print(type_locs)
+        print(type(type_locs))
         print(targetLoc not in json.loads(type_locs))
         print(targetLoc not in type_locs)
         if type_locs is not None and targetLoc not in type_locs:
@@ -96,14 +99,14 @@ def getApp(dbname):
         db = client[db_name]
         collection = db['type_to_targetLocs']
 
-        if collection.find_one({'type': type}) is not None:
+        if collection.find_one({'type': _type}) is not None:
             collection.update(
-                {'type': type}, 
+                {'type': _type}, 
                 {'$push': {'targetLocs': targetLoc}}
             )
         else:
             collection.insert_one(
-                {'type': type, 
+                {'type': _type, 
                  'targetLocs': [targetLoc]}
             )
         client.close()
