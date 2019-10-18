@@ -3,7 +3,7 @@ import requests
 from eve import Eve
 from flask import Flask, redirect, url_for, request
 from pymongo import MongoClient
-from settings import getSettings
+from .settings import getSettings
 
 def getApp(dbname):
     app = Eve(getSettings(dbname))
