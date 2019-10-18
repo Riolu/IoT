@@ -3,9 +3,10 @@ import requests
 from eve import Eve
 from flask import Flask, redirect, url_for, request
 from pymongo import MongoClient
+from settings import getSettings
 
-def getApp():
-    app = Eve()
+def getApp(dbname):
+    app = Eve(getSettings(dbname))
 
     def retrieve(key, field, baseUrl, tableName):
         url = baseUrl + tableName + '/' + key
@@ -39,6 +40,7 @@ def getApp():
             url = child_url + '/td'
             data = json.dumps(td)
 
+            # update metadata
             info_data = {
                 "type": td["_type"],
                 "targetLoc": targetLoc
@@ -62,8 +64,8 @@ def getApp():
         
         return data
 
-    @app.route("/info", methods = ['PUT'])
-    def info():
+    @app.route("/registerInfo", methods = ['PUT'])
+    def registerInfo():
         if request.data:
             body = json.loads(request.data)
         type = body["type"]
@@ -100,7 +102,92 @@ def getApp():
             parent_url = response.json().get('url', None)
             if parent_url:
                 headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-                requests.put(parent_url + '/info', data=request.data, headers=headers)
+                requests.put(parent_url + '/registerInfo', data=request.data, headers=headers)
+        
+        return {}
+
+    @app.route('/delete', methods = ['DELETE'])
+    def delete():
+        if request.data:
+            body = json.loads(request.data)
+        targetLoc = body['targetLoc']
+        toDeleteId = body["toDeleteId"]
+
+        host_url = request.host_url
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        
+        self_loc = getSelfName(host_url)
+        child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
+        child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
+        
+        if child_url is not None:
+            # use Eve to delete
+            url = child_url + '/td'
+            data = json.dumps(td)
+
+            # update metadata
+            info_data = {
+                "type": td["_type"],
+                "targetLoc": targetLoc
+            }
+            requests.put(child_url+"/info", data=json.dumps(info_data), headers=headers)
+
+        elif child_loc is not None:
+            # go to lower database use register API
+            child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+            url = child_url + '/register'
+            data = request.data
+        else:
+            # go to master database use register API
+            master_url = retrieve("master", "url", host_url, "loc_to_url")
+            if master_url+'/' == host_url:
+                return {}
+            url = master_url + '/register'
+            data = request.data
+            
+        requests.post(url, data=data, headers=headers)
+        
+        return data
+
+    @app.route("/deleteInfo", methods = ['PUT'])
+    def registerInfo():
+        if request.data:
+            body = json.loads(request.data)
+        type = body["type"]
+        targetLoc = body["targetLoc"]
+
+        # check whether the type is already in type_to_targetLoc
+        type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
+        if type_locs is not None:
+            return {}
+        
+        # add to type_to_targetLoc
+        client = MongoClient('localhost', 27017)
+        db_name = getSelfName(request.host_url)
+        db = client[db_name]
+        collection = db['type_to_targetLocs']
+
+        if collection.find_one({'type': type}) is not None:
+            collection.update(
+                {'type': type}, 
+                {'$push': {'targetLocs': targetLoc}}
+            )
+        else:
+            collection.insert_one(
+                {'type': type, 
+                 'targetLocs': [targetLoc]}
+            )
+        client.close()
+
+        host_url = request.host_url
+        url = host_url + 'loc_to_url/parent'
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            parent_url = response.json().get('url', None)
+            if parent_url:
+                headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+                requests.put(parent_url + '/deleteInfo', data=request.data, headers=headers)
         
         return {}
 
