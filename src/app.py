@@ -108,10 +108,8 @@ def getApp(dbname):
 
     @app.route('/delete', methods = ['DELETE'])
     def delete():
-        if request.data:
-            body = json.loads(request.data)
-        targetLoc = body['targetLoc']
-        toDeleteId = body["toDeleteId"]
+        targetLoc = request.args.get("targetLoc")
+        toDeleteId = request.args.get("id")
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -143,19 +141,17 @@ def getApp(dbname):
         elif child_loc is not None:
             # go to lower database use register API
             child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
-            url = child_url + '/delete'
-            data = request.data
+            url = child_url + '/delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             requests.delete(url)
         else:
             # go to master database use register API
             master_url = retrieve("master", "url", host_url, "loc_to_url")
             if master_url+'/' == host_url:
                 return {}
-            url = master_url + '/delete'
-            data = request.data
+            url = master_url + '/delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             requests.delete(url)
         
-        return data
+        return {}
 
     @app.route("/deleteInfo", methods = ['PUT'])
     def deleteInfo():
