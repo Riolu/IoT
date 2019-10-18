@@ -8,7 +8,7 @@ from .settings import getSettings
 def getApp(dbname):
     app = Eve(settings=getSettings(dbname))
 
-    def retrieve(key, baseUrl, tableName):
+    def retrieveAll(key, baseUrl, tableName):
         url = baseUrl + tableName + '/' + key
         response = requests.get(url)
 
@@ -131,7 +131,7 @@ def getApp(dbname):
         
         if child_url is not None:
             # use Eve to delete
-            td = retrieve(toDeleteId, child_url+'/', 'td')
+            td = retrieveAll(toDeleteId, child_url+'/', 'td')
             if td is None:
                 return {}
 
