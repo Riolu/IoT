@@ -143,6 +143,7 @@ def getApp(dbname):
                     "targetLoc": targetLoc
                 }
                 requests.put(child_url+"/deleteInfo", data=json.dumps(info_data), headers=headers)
+            url = child_url + '/td/' + toDeleteId
             requests.delete(url, headers={"If-Match": td["_etag"]})
 
         elif child_loc is not None:
