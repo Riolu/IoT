@@ -6,7 +6,7 @@ from pymongo import MongoClient
 from .settings import getSettings
 
 def getApp(dbname):
-    app = Eve(getSettings(dbname))
+    app = Eve(settings=getSettings(dbname))
 
     def retrieve(key, field, baseUrl, tableName):
         url = baseUrl + tableName + '/' + key
