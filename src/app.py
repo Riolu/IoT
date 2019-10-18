@@ -8,16 +8,23 @@ from .settings import getSettings
 def getApp(dbname):
     app = Eve(settings=getSettings(dbname))
 
-    def retrieve(key, field=None, baseUrl, tableName):
+    def retrieve(key, baseUrl, tableName):
         url = baseUrl + tableName + '/' + key
         response = requests.get(url)
 
         if response.status_code == 200:
             data = response.json()
-            if field is None:
-                return data
-            else:
-                return data.get(field, None)
+            return data
+        else:
+            return None
+
+    def retrieve(key, baseUrl, tableName):
+        url = baseUrl + tableName + '/' + key
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+            return data.get(field, None)
         else:
             return None
 
@@ -124,7 +131,7 @@ def getApp(dbname):
         
         if child_url is not None:
             # use Eve to delete
-            td = retrieve(toDeleteId, None, child_url+'/', 'td')
+            td = retrieve(toDeleteId, child_url+'/', 'td')
             if td is None:
                 return {}
 
