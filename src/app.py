@@ -18,7 +18,7 @@ def getApp(dbname):
         else:
             return None
 
-    def retrieve(key, baseUrl, tableName):
+    def retrieve(key, field, baseUrl, tableName):
         url = baseUrl + tableName + '/' + key
         response = requests.get(url)
 
