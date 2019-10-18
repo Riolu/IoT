@@ -62,7 +62,6 @@ def getApp():
         
         return data
 
-
     @app.route("/info", methods = ['PUT'])
     def info():
         if request.data:
