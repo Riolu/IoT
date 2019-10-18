@@ -45,7 +45,7 @@ def getApp(dbname):
                 "type": td["_type"],
                 "targetLoc": targetLoc
             }
-            requests.put(child_url+"/info", data=json.dumps(info_data), headers=headers)
+            requests.put(child_url+"/registerInfo", data=json.dumps(info_data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
@@ -122,61 +122,57 @@ def getApp(dbname):
         
         if child_url is not None:
             # use Eve to delete
-            url = child_url + '/td'
-            data = json.dumps(td)
+            url = child_url + '/td/' + toDeleteId
 
             # update metadata
-            info_data = {
-                "type": td["_type"],
-                "targetLoc": targetLoc
-            }
-            requests.put(child_url+"/info", data=json.dumps(info_data), headers=headers)
+            # to delete not found
+            td = requests.get(url).json()
+            if not td:
+                return {}
+
+            # check whether the last item of a certain type
+            tds = requests.get(child_url + '/td/' + td['_type']).json()
+            if len(tds) == 1:
+                info_data = {
+                    "type": td["_type"],
+                    "targetLoc": targetLoc
+                }
+                requests.put(child_url+"/deleteInfo", data=json.dumps(info_data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
             child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
-            url = child_url + '/register'
+            url = child_url + '/delete'
             data = request.data
         else:
             # go to master database use register API
             master_url = retrieve("master", "url", host_url, "loc_to_url")
             if master_url+'/' == host_url:
                 return {}
-            url = master_url + '/register'
+            url = master_url + '/delete'
             data = request.data
             
-        requests.post(url, data=data, headers=headers)
+        requests.delete(url)
         
         return data
 
     @app.route("/deleteInfo", methods = ['PUT'])
-    def registerInfo():
+    def deleteInfo():
         if request.data:
             body = json.loads(request.data)
         type = body["type"]
         targetLoc = body["targetLoc"]
 
-        # check whether the type is already in type_to_targetLoc
-        type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
-        if type_locs is not None:
-            return {}
-        
-        # add to type_to_targetLoc
+        # delete from type_to_targetLoc
         client = MongoClient('localhost', 27017)
         db_name = getSelfName(request.host_url)
         db = client[db_name]
         collection = db['type_to_targetLocs']
 
-        if collection.find_one({'type': type}) is not None:
-            collection.update(
-                {'type': type}, 
-                {'$push': {'targetLocs': targetLoc}}
-            )
-        else:
-            collection.insert_one(
-                {'type': type, 
-                 'targetLocs': [targetLoc]}
-            )
+        collection.update(
+            {'type': type}, 
+            {'$pull': {'targetLocs': targetLoc}}
+        )
         client.close()
 
         host_url = request.host_url

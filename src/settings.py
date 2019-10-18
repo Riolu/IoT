@@ -126,23 +126,23 @@ def getSettings(dbname):
     return {
         # Please note that MONGO_HOST and MONGO_PORT could very well be left
         # out as they already default to a bare bones local 'mongod' instance.
-        MONGO_HOST = 'localhost',
-        MONGO_PORT = 27017,
+        'MONGO_HOST' = 'localhost',
+        'MONGO_PORT' = 27017,
         # Skip this block if your db has no auth. But it really should.
         # MONGO_USERNAME = '<your username>'
         # MONGO_PASSWORD = '<your password>'
         # Name of the database on which the user can be authenticated,
         # needed if --auth mode is enabled.
         # MONGO_AUTH_SOURCE = '<dbname>'
-        MONGO_DBNAME = dbname,
+        'MONGO_DBNAME' = dbname,
         # Enable reads (GET), inserts (POST) and DELETE for resources/collections
         # (if you omit this line, the API will default to ['GET'] and provide
         # read-only access to the endpoint).
-        RESOURCE_METHODS = ['GET', 'POST', 'DELETE'],
+        'RESOURCE_METHODS' = ['GET', 'POST', 'DELETE'],
         # Enable reads (GET), edits (PATCH), replacements (PUT) and deletes of
         # individual items  (defaults to read-only item access).
-        ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE'],
-        DOMAIN = {
+        'ITEM_METHODS' = ['GET', 'PATCH', 'PUT', 'DELETE'],
+        'DOMAIN' = {
             'td': td,
             'loc_to_url': loc_to_url,
             'type_to_targetLocs': type_to_targetLocs,
