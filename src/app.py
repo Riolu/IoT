@@ -8,12 +8,16 @@ from .settings import getSettings
 def getApp(dbname):
     app = Eve(settings=getSettings(dbname))
 
-    def retrieve(key, field, baseUrl, tableName):
+    def retrieve(key, field=None, baseUrl, tableName):
         url = baseUrl + tableName + '/' + key
         response = requests.get(url)
 
         if response.status_code == 200:
-            return response.json().get(field, None)
+            data = response.json()
+            if field is None:
+                return data
+            else:
+                return data.get(field, None)
         else:
             return None
 
@@ -120,12 +124,8 @@ def getApp(dbname):
         
         if child_url is not None:
             # use Eve to delete
-            url = child_url + '/td/' + toDeleteId
-
-            # update metadata
-            # to delete not found
-            td = requests.get(url).json()
-            if not td:
+            td = retrieve(toDeleteId, None, child_url+'/', 'td')
+            if td is None:
                 return {}
 
             # check whether the last item of a certain type
