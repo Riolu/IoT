@@ -138,12 +138,14 @@ def getApp(dbname):
                     "targetLoc": targetLoc
                 }
                 requests.put(child_url+"/deleteInfo", data=json.dumps(info_data), headers=headers)
+            requests.delete(url, headers={"If-Match": td["_etag"]})
 
         elif child_loc is not None:
             # go to lower database use register API
             child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
             url = child_url + '/delete'
             data = request.data
+            requests.delete(url)
         else:
             # go to master database use register API
             master_url = retrieve("master", "url", host_url, "loc_to_url")
@@ -151,8 +153,7 @@ def getApp(dbname):
                 return {}
             url = master_url + '/delete'
             data = request.data
-            
-        requests.delete(url)
+            requests.delete(url)
         
         return data
 
