@@ -85,6 +85,8 @@ def getApp(dbname):
         # check whether the type is already in type_to_targetLoc
         type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
         print(type_locs)
+        print(targetLoc not in json.loads(type_locs))
+        print(targetLoc not in type_locs)
         if type_locs is not None and targetLoc not in type_locs:
             return {}
         
