@@ -84,7 +84,7 @@ def getApp(dbname):
 
         # check whether the type is already in type_to_targetLoc
         type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs")
-        if type_locs is not None:
+        if targetLoc is not in type_locs:
             return {}
         
         # add to type_to_targetLoc
