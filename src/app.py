@@ -136,7 +136,7 @@ def getApp(dbname):
                 return {}
 
             # check whether the last item of a certain type
-            tds = requests.get(child_url + '/td/' + td['_type']).json()
+            tds = requests.get(child_url + '/searchAtLoc?type=' + td['_type']).json()
             if len(tds) == 1:
                 info_data = {
                     "type": td["_type"],
