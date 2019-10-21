@@ -199,8 +199,8 @@ def getApp(dbname):
         toReplaceId = request.args.get("id")
 
         master_url = retrieve("master", "url", request.host_url, "loc_to_url")
-
-        td = retrieveAll(toReplaceId, master_url+'/', "td")
+        
+        td = requests.get(master_url + '/searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId)).json()
         
         delete_url = master_url + '/delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
         requests.delete(delete_url)
@@ -270,6 +270,34 @@ def getApp(dbname):
                     return {}
                 target_url = master_url
             response = requests.get(target_url + '/searchByLocType?loc={}&type={}'.format(loc, type))
+
+        return json.dumps(response.json())
+
+    
+    @app.route("/searchByLocId", methods = ['GET'])
+    def searchByLocId():
+        loc = request.args.get('loc')
+        id = request.args.get('id')
+
+        host_url = request.host_url
+        
+        self_loc = getSelfName(host_url)
+        target_url = retrieve(loc, "url", host_url, "loc_to_url")
+        child_loc = retrieve(loc, "childLoc", host_url, "targetLoc_to_childLoc")
+
+        if self_loc == loc or target_url is not None:
+            target_url = host_url if self_loc==loc else target_url+'/'
+            response = retrieveAll(id, target_url, "td")
+        else:
+            if child_loc is not None:
+                child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+                target_url = child_url
+            else:
+                master_url = retrieve("master", "url", host_url, "loc_to_url")
+                if host_url == master_url+'/':
+                    return {}
+                target_url = master_url
+            response = requests.get(target_url + '/searchByLocId?loc={}&id={}'.format(loc, id))
 
         return json.dumps(response.json())
 
