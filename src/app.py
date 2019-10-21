@@ -200,7 +200,7 @@ def getApp(dbname):
 
         master_url = retrieve("master", "url", request.host_url, "loc_to_url")
 
-        td = retrieveAll(toReplaceId, master_url, "td")
+        td = retrieveAll(toReplaceId, master_url+'/', "td")
         
         delete_url = master_url + '/delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
         requests.delete(delete_url)
