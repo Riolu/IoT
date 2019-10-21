@@ -203,7 +203,7 @@ def getApp(dbname):
         
         td = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId)).json()
         
-        for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:
+        for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:ß
             td.pop(key, None)
         print(td)
 
@@ -231,7 +231,7 @@ def getApp(dbname):
         result_list = list()
         if self_name in type_locs:
             # use Eve to get
-            url = request.host_url + 'td?where=_type=='{}''.format(type)
+            url = request.host_url + 'td?where=_type=="{}"'.format(type)
             result_list += requests.get(url).json()['_items']
             type_locs.remove(self_name)
         
