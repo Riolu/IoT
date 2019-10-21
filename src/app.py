@@ -36,54 +36,54 @@ def getApp(dbname):
         if request.data:
             body = json.loads(request.data)
         targetLoc = body['targetLoc']
-        td = body["td"]
+        td = body['td']
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         
         self_loc = getSelfName(host_url)
-        child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
-        child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
+        child_url = retrieve(targetLoc, 'url', host_url, 'loc_to_url')
+        child_loc = retrieve(targetLoc, 'childLoc', host_url, 'targetLoc_to_childLoc')
         
         # if self_loc == targetLoc
         if child_url is not None:
             # use Eve to post
-            url = child_url + '/td'
+            url = child_url + 'td'
             data = json.dumps(td)
 
             # update metadata
             info_data = {
-                "type": td["_type"],
-                "targetLoc": targetLoc
+                'type': td['_type'],
+                'targetLoc': targetLoc
             }
-            requests.put(child_url+"/registerInfo", data=json.dumps(info_data), headers=headers)
+            requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
-            child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
-            url = child_url + '/register'
+            child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
+            url = child_url + 'register'
             data = request.data
         else:
             # go to master database use register API
-            master_url = retrieve("master", "url", host_url, "loc_to_url")
-            if master_url+'/' == host_url:
+            master_url = retrieve('master', 'url', host_url, 'loc_to_url')
+            if master_url == host_url:
                 return {}
-            url = master_url + '/register'
+            url = master_url + 'register'
             data = request.data
             
         requests.post(url, data=data, headers=headers)
         
         return data
 
-    @app.route("/registerInfo", methods = ['PUT'])
+    @app.route('/registerInfo', methods = ['PUT'])
     def registerInfo():
         if request.data:
             body = json.loads(request.data)
-        _type = body["type"]
-        targetLoc = body["targetLoc"]
+        _type = body['type']
+        targetLoc = body['targetLoc']
 
         # check whether the type is already in type_to_targetLoc
-        type_locs = retrieve(_type, "targetLocs", request.host_url, "type_to_targetLocs")
+        type_locs = retrieve(_type, 'targetLocs', request.host_url, 'type_to_targetLocs')
         if type_locs is not None and targetLoc in type_locs:
             return {}
         
@@ -105,6 +105,7 @@ def getApp(dbname):
             )
         client.close()
 
+        # TODO: use retrieve
         host_url = request.host_url
         url = host_url + 'loc_to_url/parent'
         response = requests.get(url)
@@ -113,60 +114,60 @@ def getApp(dbname):
             parent_url = response.json().get('url', None)
             if parent_url:
                 headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-                requests.put(parent_url + '/registerInfo', data=request.data, headers=headers)
+                requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
         
         return {}
 
     @app.route('/delete', methods = ['DELETE'])
     def delete():
-        targetLoc = request.args.get("targetLoc")
-        toDeleteId = request.args.get("id")
+        targetLoc = request.args.get('targetLoc')
+        toDeleteId = request.args.get('id')
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         
         self_loc = getSelfName(host_url)
-        child_url = retrieve(targetLoc, "url", host_url, "loc_to_url")
-        child_loc = retrieve(targetLoc, "childLoc", host_url, "targetLoc_to_childLoc")
+        child_url = retrieve(targetLoc, 'url', host_url, 'loc_to_url')
+        child_loc = retrieve(targetLoc, 'childLoc', host_url, 'targetLoc_to_childLoc')
         
         if child_url is not None:
             # use Eve to delete
-            td = retrieveAll(toDeleteId, child_url+'/', 'td')
+            td = retrieveAll(toDeleteId, child_url, 'td')
             if td is None:
                 return {}
 
             # check whether the last item of a certain type
-            tds = requests.get(child_url + '/searchAtLoc?type=' + td['_type']).json()
+            tds = requests.get(child_url + 'searchAtLoc?type=' + td['_type']).json()
             if len(tds) == 1:
                 info_data = {
-                    "type": td["_type"],
-                    "targetLoc": targetLoc
+                    'type': td['_type'],
+                    'targetLoc': targetLoc
                 }
-                requests.put(child_url+"/deleteInfo", data=json.dumps(info_data), headers=headers)
-            url = child_url + '/td/' + toDeleteId
-            requests.delete(url, headers={"If-Match": td["_etag"]})
+                requests.put(child_url+'deleteInfo', data=json.dumps(info_data), headers=headers)
+            url = child_url + 'td/' + toDeleteId
+            requests.delete(url, headers={'If-Match': td['_etag']})
 
         elif child_loc is not None:
             # go to lower database use register API
-            child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
-            url = child_url + '/delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
+            child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
+            url = child_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             requests.delete(url)
         else:
             # go to master database use register API
-            master_url = retrieve("master", "url", host_url, "loc_to_url")
-            if master_url+'/' == host_url:
+            master_url = retrieve('master', 'url', host_url, 'loc_to_url')
+            if master_url == host_url:
                 return {}
-            url = master_url + '/delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
+            url = master_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             requests.delete(url)
         
         return {}
 
-    @app.route("/deleteInfo", methods = ['PUT'])
+    @app.route('/deleteInfo', methods = ['PUT'])
     def deleteInfo():
         if request.data:
             body = json.loads(request.data)
-        type = body["type"]
-        targetLoc = body["targetLoc"]
+        type = body['type']
+        targetLoc = body['targetLoc']
 
         # delete from type_to_targetLoc
         client = MongoClient('localhost', 27017)
@@ -188,27 +189,31 @@ def getApp(dbname):
             parent_url = response.json().get('url', None)
             if parent_url:
                 headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-                requests.put(parent_url + '/deleteInfo', data=request.data, headers=headers)
+                requests.put(parent_url + 'deleteInfo', data=request.data, headers=headers)
         
         return {}
 
-    @app.route("/replace", methods = ['PUT'])
+    @app.route('/replace', methods = ['PUT'])
     def replace():
-        fromLoc = request.args.get("fromLoc")
-        toLoc = request.args.get("toLoc")
-        toReplaceId = request.args.get("id")
+        fromLoc = request.args.get('fromLoc')
+        toLoc = request.args.get('toLoc')
+        toReplaceId = request.args.get('id')
 
-        master_url = retrieve("master", "url", request.host_url, "loc_to_url")
+        master_url = retrieve('master', 'url', request.host_url, 'loc_to_url')
         
-        td = requests.get(master_url + '/searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId)).json()
+        td = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId)).json()
         
-        delete_url = master_url + '/delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
+        for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']
+            td.pop(key, None)
+        print(td)
+
+        delete_url = master_url + 'delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
         requests.delete(delete_url)
 
-        register_url = master_url + '/register'
+        register_url = master_url + 'register'
         data = {
-            "targetLoc": toLoc,
-            "td": td
+            'targetLoc': toLoc,
+            'td': td
         }
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         requests.post(register_url, data=json.dumps(data), headers=headers)
@@ -217,36 +222,36 @@ def getApp(dbname):
 
     
     # search by type at a certain loc
-    @app.route("/searchAtLoc", methods = ['GET'])
+    @app.route('/searchAtLoc', methods = ['GET'])
     def searchAtLoc():
-        type = request.args.get("type")
-        type_locs = retrieve(type, "targetLocs", request.host_url, "type_to_targetLocs") or []
+        type = request.args.get('type')
+        type_locs = retrieve(type, 'targetLocs', request.host_url, 'type_to_targetLocs') or []
 
         self_name = getSelfName(request.host_url)
         result_list = list()
         if self_name in type_locs:
             # use Eve to get
-            url = request.host_url + 'td?where=_type=="{}"'.format(type)
+            url = request.host_url + 'td?where=_type=='{}''.format(type)
             result_list += requests.get(url).json()['_items']
             type_locs.remove(self_name)
         
         child_url_set = set()
         for target_loc in type_locs:
-            target_url = retrieve(target_loc, "url", request.host_url, "loc_to_url")
+            target_url = retrieve(target_loc, 'url', request.host_url, 'loc_to_url')
             if target_url:
                 child_url_set.add(target_url)
             else:
-                child_loc = retrieve(target_loc, "childLoc", request.host_url, "targetLoc_to_childLoc")
-                child_url = retrieve(child_loc, "url", request.host_url, "loc_to_url")
+                child_loc = retrieve(target_loc, 'childLoc', request.host_url, 'targetLoc_to_childLoc')
+                child_url = retrieve(child_loc, 'url', request.host_url, 'loc_to_url')
                 child_url_set.add(child_url)
         
         for child_url in child_url_set:
-            result_list.extend(requests.get(child_url+'/searchAtLoc?type='+type).json())
+            result_list.extend(requests.get(child_url+'searchAtLoc?type='+type).json())
         
         return json.dumps(result_list)
 
 
-    @app.route("/searchByLocType", methods = ['GET'])
+    @app.route('/searchByLocType', methods = ['GET'])
     def searchByLocType():
         loc = request.args.get('loc')
         type = request.args.get('type')
@@ -254,27 +259,27 @@ def getApp(dbname):
         host_url = request.host_url
         
         self_loc = getSelfName(host_url)
-        target_url = retrieve(loc, "url", host_url, "loc_to_url")
-        child_loc = retrieve(loc, "childLoc", host_url, "targetLoc_to_childLoc")
+        target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
+        child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
 
         if self_loc == loc or target_url is not None:
-            target_url = host_url if self_loc==loc else target_url+'/'
+            target_url = host_url if self_loc==loc else target_url
             response = requests.get(target_url + 'searchAtLoc?type='+type)
         else:
             if child_loc is not None:
-                child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+                child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
                 target_url = child_url
             else:
-                master_url = retrieve("master", "url", host_url, "loc_to_url")
-                if host_url == master_url+'/':
+                master_url = retrieve('master', 'url', host_url, 'loc_to_url')
+                if host_url == master_url:
                     return {}
                 target_url = master_url
-            response = requests.get(target_url + '/searchByLocType?loc={}&type={}'.format(loc, type))
+            response = requests.get(target_url + 'searchByLocType?loc={}&type={}'.format(loc, type))
 
         return json.dumps(response.json())
 
     
-    @app.route("/searchByLocId", methods = ['GET'])
+    @app.route('/searchByLocId', methods = ['GET'])
     def searchByLocId():
         loc = request.args.get('loc')
         id = request.args.get('id')
@@ -282,22 +287,22 @@ def getApp(dbname):
         host_url = request.host_url
         
         self_loc = getSelfName(host_url)
-        target_url = retrieve(loc, "url", host_url, "loc_to_url")
-        child_loc = retrieve(loc, "childLoc", host_url, "targetLoc_to_childLoc")
+        target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
+        child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
 
         if self_loc == loc or target_url is not None:
-            target_url = host_url if self_loc==loc else target_url+'/'
-            response = retrieveAll(id, target_url, "td")
+            target_url = host_url if self_loc==loc else target_url
+            response = retrieveAll(id, target_url, 'td')
         else:
             if child_loc is not None:
-                child_url = retrieve(child_loc, "url", host_url, "loc_to_url")
+                child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
                 target_url = child_url
             else:
-                master_url = retrieve("master", "url", host_url, "loc_to_url")
-                if host_url == master_url+'/':
+                master_url = retrieve('master', 'url', host_url, 'loc_to_url')
+                if host_url == master_url:
                     return {}
                 target_url = master_url
-            response = requests.get(target_url + '/searchByLocId?loc={}&id={}'.format(loc, id)).json()
+            response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, id)).json()
 
         return json.dumps(response)
 
