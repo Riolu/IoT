@@ -9,7 +9,7 @@ def dbinit(dbname, urls, child_locs, drop=False):
 
     client = MongoClient("localhost", 27017)
     if args.drop:
-        client.drop_databse(dbname)
+        client.drop_database(dbname)
     db = client[dbname]
 
     collection_loc_to_url = db["loc_to_url"]
