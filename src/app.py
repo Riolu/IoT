@@ -203,7 +203,7 @@ def getApp(dbname):
         
         td = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId)).json()
         
-        for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:ß
+        for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:
             td.pop(key, None)
         print(td)
 
