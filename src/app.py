@@ -210,6 +210,7 @@ def getApp(dbname):
             "targetLoc": toLoc,
             "td": td
         }
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         requests.post(register_url, data=data, headers=headers)
 
         return data
