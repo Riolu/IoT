@@ -1,21 +1,14 @@
+import argparse
 from pymongo import MongoClient
 
-DB_NAME = "manhattan"
-URLS = [
-    {"loc": "master", "url": "http://192.168.1.189:5000"},
-    {"loc": "parent", "url": ""},
-    {"loc": "columbia", "url": "http://192.168.1.156:5001"},
-    {"loc": "self", "url": "manhattan"}
-]
-
-CHILD_LOCS = [
-        {"targetLoc": "irt", "childLoc": "columbia"},
-        {"targetLoc": "cs", "childLoc": "columbia"}
-    ]
-
 def dbinit(dbname, urls, child_locs, drop=False):
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--drop', dest='drop', action='store_true')
+    parser.set_default(drop=False)
+    args = parser.parse_args()
+
     client = MongoClient("localhost", 27017)
-    if drop:
+    if args.drop:
         client.drop_databse(dbname)
     db = client[dbname]
 

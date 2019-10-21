@@ -1,4 +1,3 @@
-import argparse
 from ..src.dbinit import dbinit
 
 if __name__ == '__main__':
@@ -10,9 +9,4 @@ if __name__ == '__main__':
     ]
     CHILD_LOCS = []
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--drop', dest='drop', action='store_true')
-    parser.set_default(drop=False)
-    args = parser.parse_args()
-
-    dbinit(DB_NAME, URLS, CHILD_LOCS, args.drop)
+    dbinit(DB_NAME, URLS, CHILD_LOCS)

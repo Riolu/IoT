@@ -211,7 +211,7 @@ def getApp(dbname):
             "td": td
         }
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(register_url, data=data, headers=headers)
+        requests.post(register_url, data=json.dumps(data), headers=headers)
 
         return data
 

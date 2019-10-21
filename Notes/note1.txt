@@ -6,8 +6,6 @@ curl -d '{"td": {"_type": "lamp"}, "targetLoc": "columbia"}' -H "Content-Type: a
 
 curl -d '{"td": {"_type": "tv"}, "targetLoc": " columbia"}' -H "Content-Type: application/json" -X POST http://localhost:5000/register
 
-curl http://127.0.0.1:5000/register -X POST -d '{"loc":"columbia", "td":{"title": "xi"}}' -H "Content-Type:application/json"
-
 curl http://127.0.0.1:5001/td -X POST -d '{"title":"xi"}' -H 'Content-Type: application/json'  
 
 curl http://127.0.0.1:5001/td
@@ -19,4 +17,8 @@ curl http://localhost:5000/searchByLocType?loc=columbia&type=tv
 python -m IoT.Manhattan.run
 
 
-nuc7
+
+
+curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "xi"}}' -H "Content-Type:application/json"
+
+curl -X PUT "http://localhost:5000/replace?fromLoc=cs&toLoc=irt&id=5dae03b162ed1ad8e481d1ef"
