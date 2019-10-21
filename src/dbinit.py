@@ -4,7 +4,7 @@ from pymongo import MongoClient
 def dbinit(dbname, urls, child_locs, drop=False):
     parser = argparse.ArgumentParser()
     parser.add_argument('--drop', dest='drop', action='store_true')
-    parser.set_default(drop=False)
+    parser.set_defaults(drop=False)
     args = parser.parse_args()
 
     client = MongoClient("localhost", 27017)
