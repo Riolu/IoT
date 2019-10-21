@@ -198,19 +198,19 @@ def getApp(dbname):
         toLoc = request.args.get("toLoc")
         toReplaceId = request.args.get("id")
 
-        master_url = retrieve("master", "url", host_url, "loc_to_url")
+        master_url = retrieve("master", "url", request.host_url, "loc_to_url")
 
         td = retrieveAll(toReplaceId, master_url, "td")
         
         delete_url = master_url + '/delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
         requests.delete(delete_url)
 
-        register_url = master_url + 'register'
+        register_url = master_url + '/register'
         data = {
             "targetLoc": toLoc,
             "td": td
         }
-        requests.post(url, data=data, headers=headers)
+        requests.post(register_url, data=data, headers=headers)
 
         return data
 
