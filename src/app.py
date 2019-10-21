@@ -297,8 +297,8 @@ def getApp(dbname):
                 if host_url == master_url+'/':
                     return {}
                 target_url = master_url
-            response = requests.get(target_url + '/searchByLocId?loc={}&id={}'.format(loc, id))
+            response = requests.get(target_url + '/searchByLocId?loc={}&id={}'.format(loc, id)).json()
 
-        return json.dumps(response.json())
+        return json.dumps(response)
 
     return app
