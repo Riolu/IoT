@@ -192,6 +192,29 @@ def getApp(dbname):
         
         return {}
 
+    @app.route("/replace", methods = ['PUT'])
+    def replace():
+        fromLoc = request.args.get("fromLoc")
+        toLoc = request.args.get("toLoc")
+        toReplaceId = request.args.get("id")
+
+        master_url = retrieve("master", "url", host_url, "loc_to_url")
+
+        td = retrieveAll(toReplaceId, master_url, "td")
+        
+        delete_url = master_url + '/delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
+        requests.delete(delete_url)
+
+        register_url = master_url + 'register'
+        data = {
+            "targetLoc": toLoc,
+            "td": td
+        }
+        requests.post(url, data=data, headers=headers)
+
+        return data
+
+    
     # search by type at a certain loc
     @app.route("/searchAtLoc", methods = ['GET'])
     def searchAtLoc():
