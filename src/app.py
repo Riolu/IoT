@@ -130,7 +130,7 @@ def getApp(dbname):
                 target_url = master_url
             response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
 
-        return json.dumps(response.json())
+        return json.dumps(response)
 
 
     @app.route('/registerInfo', methods = ['PUT'])
