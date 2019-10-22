@@ -62,6 +62,34 @@ td = {
     }
 }
 
+public_td = {
+    # 'title' tag used in item links. Defaults to the resource title minus
+    # the final, plural 's' (works fine in most cases but not for 'people')
+    'item_title': 'public_td',
+
+    # by default the standard item entry point is defined as
+    # '/people/<ObjectId>'. We leave it untouched, and we also enable an
+    # additional read-only entry point. This way consumers can also perform
+    # GET requests at '/people/<lastname>'.
+    'additional_lookup': {
+        'url': 'regex("[\w]+")',
+        'field': '_type'
+    },
+
+    # We choose to override global cache-control directives for this resource.
+    'cache_control': 'max-age=10,must-revalidate',
+    'cache_expires': 10,
+
+    # most global settings can be overridden at resource level
+    'resource_methods': ['GET', 'POST'],
+    'item_methods': ['GET', 'DELETE'],
+
+    'schema': {
+        '_type': {
+            'type': 'string'
+        }
+    }
+}
 
 loc_to_url_schema = {
     'loc': {
@@ -147,6 +175,7 @@ def getSettings(dbname):
             'td': td,
             'loc_to_url': loc_to_url,
             'type_to_targetLocs': type_to_targetLocs,
-            'targetLoc_to_childLoc': targetLoc_to_childLoc
+            'targetLoc_to_childLoc': targetLoc_to_childLoc,
+            'public_td': public_td
         }
     }
