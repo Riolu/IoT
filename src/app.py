@@ -102,8 +102,35 @@ def getApp(dbname):
                     'td': td
                 }
                 requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
-                
+
         return {}
+
+    
+    @app.route('searchPublic', methods = ['GET'])
+    def searchPublic():
+        loc = request.args.get('loc')
+
+        host_url = request.host_url
+        
+        self_loc = getSelfName(host_url)
+        target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
+        child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
+
+        if self_loc == loc or target_url is not None:
+            target_url = host_url if self_loc==loc else target_url
+            response = retrieveAll('', target_url, 'public_td')
+        else:
+            if child_loc is not None:
+                child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
+                target_url = child_url
+            else:
+                master_url = retrieve('master', 'url', host_url, 'loc_to_url')
+                if host_url == master_url:
+                    return {}
+                target_url = master_url
+            response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
+
+        return json.dumps(response.json())
 
 
     @app.route('/registerInfo', methods = ['PUT'])

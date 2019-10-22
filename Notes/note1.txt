@@ -21,4 +21,6 @@ python -m IoT.Manhattan.run
 
 curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "xi"}}' -H "Content-Type:application/json"
 
+curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "xi"}, "publicity":5}' -H "Content-Type:application/json"
+
 curl -X PUT "http://localhost:5000/replace?fromLoc=cs&toLoc=irt&id=5dae0adafb529a3827e753f4"
