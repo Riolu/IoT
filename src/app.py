@@ -102,6 +102,8 @@ def getApp(dbname):
                     'td': td
                 }
                 requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+                
+        return {}
 
 
     @app.route('/registerInfo', methods = ['PUT'])
