@@ -233,7 +233,7 @@ def getApp(dbname):
         print(td)
 
         delete_url = master_url + 'delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
-        requests.delete(delete_url)f
+        requests.delete(delete_url)
 
         register_url = master_url + 'register'
         data = {
