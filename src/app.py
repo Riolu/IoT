@@ -37,6 +37,7 @@ def getApp(dbname):
             body = json.loads(request.data)
         targetLoc = body['targetLoc']
         td = body['td']
+        publicity = body.get('publicity', 0)
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -57,6 +58,12 @@ def getApp(dbname):
                 'targetLoc': targetLoc
             }
             requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
+            if publicity > 0:
+                public_data = {
+                    'publicity': publicity,
+                    'td': td
+                }
+                requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
@@ -74,6 +81,28 @@ def getApp(dbname):
         requests.post(url, data=data, headers=headers)
         
         return data
+
+
+    @app.route('/pushUp', methods = ['POST'])
+    def pushUp():
+        body = json.loads(request.data)
+        td = body['td']
+        publicity = body.get('publicity', 0)
+        
+        host_url = request.host_url
+        headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+        requests.post(host_url + 'public_td', data=json.dumps(td), headers=headers)
+
+        publicity -= 1
+        if publicity > 0:
+            parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
+            if parent_url:
+                public_data = {
+                    'publicity': publicity,
+                    'td': td
+                }
+                requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+
 
     @app.route('/registerInfo', methods = ['PUT'])
     def registerInfo():
@@ -105,16 +134,12 @@ def getApp(dbname):
             )
         client.close()
 
-        # TODO: use retrieve
         host_url = request.host_url
-        url = host_url + 'loc_to_url/parent'
-        response = requests.get(url)
+        parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
 
-        if response.status_code == 200:
-            parent_url = response.json().get('url', None)
-            if parent_url:
-                headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-                requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
+        if parent_url:
+            headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+            requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
         
         return {}
 
@@ -208,7 +233,7 @@ def getApp(dbname):
         print(td)
 
         delete_url = master_url + 'delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
-        requests.delete(delete_url)
+        requests.delete(delete_url)f
 
         register_url = master_url + 'register'
         data = {

@@ -1,4 +1,5 @@
 ssh root@irt-ap.cs.columbia.edu
 ssh nuc@nuc6
 ssh nuc@nuc7
-password: irtlab7lw2
+password: 
+irtlab7lw2
