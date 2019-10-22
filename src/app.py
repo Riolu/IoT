@@ -106,7 +106,7 @@ def getApp(dbname):
         return {}
 
     
-    @app.route('searchPublic', methods = ['GET'])
+    @app.route('/searchPublic', methods = ['GET'])
     def searchPublic():
         loc = request.args.get('loc')
 
