@@ -44,7 +44,7 @@ td = {
     # GET requests at '/people/<lastname>'.
     'additional_lookup': {
         'url': 'regex("[\w]+")',
-        'field': '_type'
+        'field': 'id'
     },
 
     # We choose to override global cache-control directives for this resource.
@@ -56,7 +56,7 @@ td = {
     'item_methods': ['GET', 'DELETE'],
 
     'schema': {
-        '_type': {
+        'id': {
             'type': 'string'
         }
     }
