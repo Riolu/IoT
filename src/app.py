@@ -37,7 +37,6 @@ def getApp(dbname):
             body = json.loads(request.data)
         targetLoc = body['targetLoc']
         td = body['td']
-        publicity = body.get('publicity', 0)
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -59,18 +58,20 @@ def getApp(dbname):
             }
             requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
             
-            if publicity > 0:
-                public_data = {
-                    'publicity': publicity,
-                    'td': td
-                }
-                requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+            if 'publicity' not in td:
+                td['publicity'] = 0
+            publicity = td['publicity']
+            public_data = {
+                'td': td
+            }
+            requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
             child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             url = child_url + 'register'
             data = request.data
+            requests.post(url, data=data, headers=headers)
         else:
             # go to master database use register API
             master_url = retrieve('master', 'url', host_url, 'loc_to_url')
@@ -78,8 +79,7 @@ def getApp(dbname):
                 return {}
             url = master_url + 'register'
             data = request.data
-            
-        requests.post(url, data=data, headers=headers)
+            requests.post(url, data=data, headers=headers)
         
         return data
 
@@ -88,18 +88,17 @@ def getApp(dbname):
     def pushUp():
         body = json.loads(request.data)
         td = body['td']
-        publicity = body.get('publicity', 0)
         
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(host_url + 'public_td', data=json.dumps(td), headers=headers)
+        target_td = 'td' if td['publicity'] == 0 else 'public_td'
+        requests.post(host_url + target_td, data=json.dumps(td), headers=headers)
 
-        publicity -= 1
-        if publicity > 0:
+        if td['publicity'] > 1:
             parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
             if parent_url:
+                td['publicity'] -= 1
                 public_data = {
-                    'publicity': publicity,
                     'td': td
                 }
                 requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
