@@ -231,7 +231,7 @@ def getApp(dbname):
 
         host_url = request.host_url
         td = retrieveAll(id, host_url, 'public_td')
-        url = host_url + 'public_td/' + id
+        url = host_url + 'public_td/' + td['_id']
         requests.delete(url, headers={'If-Match': td['_etag']})
 
         if publicity > 0:
