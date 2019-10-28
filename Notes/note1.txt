@@ -17,7 +17,7 @@ python -m IoT.Manhattan.run
 
 
 // register
-curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "tv"}}' -H "Content-Type:application/json"
+curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "tv", "id": "123"}}' -H "Content-Type:application/json"
 
 // query
 curl "http://192.168.1.189:5000/searchByLocType?loc=columbia&type=tv"
@@ -27,4 +27,8 @@ curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_t
 
 curl http://localhost:5000/searchPublic?loc=columbia
 
+// delete
+curl -X DELETE "http://localhost:5000/delete?targetLoc=cs&id=123"
+
+// replace
 curl -X PUT "http://localhost:5000/replace?fromLoc=cs&toLoc=irt&id=5dae 0adafb529a3827e753f4"
