@@ -196,7 +196,6 @@ def getApp(dbname):
                     'publicity': td['publicity']
                 }
                 requests.put(child_url+'deletePublic', data=json.dumps(data), headers=headers)
-                return {}
 
             # check whether the last item of a certain type
             tds = requests.get(child_url + 'searchAtLoc?type=' + td['_type']).json()
