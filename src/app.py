@@ -224,7 +224,7 @@ def getApp(dbname):
 
     @app.route('/deletePublic', methods = ['PUT'])
     def deletePublic(): 
-        if request.data():
+        if request.data:
             body = json.loads(request.data)
         id = body['id']
         publicity = body['publicity']
