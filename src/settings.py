@@ -56,6 +56,9 @@ td = {
     'item_methods': ['GET', 'DELETE'],
 
     'schema': {
+        '_type': {
+            'type': 'string'
+        },
         'id': {
             'type': 'string'
         }
