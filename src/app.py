@@ -58,6 +58,7 @@ def getApp(dbname):
                 'targetLoc': targetLoc
             }
             requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
+            
             if publicity > 0:
                 public_data = {
                     'publicity': publicity,
