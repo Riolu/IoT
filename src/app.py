@@ -190,6 +190,14 @@ def getApp(dbname):
             if td is None:
                 return {}
 
+            if td['publicity'] and td['publicity'] > 0:
+                data = {
+                    'id': td['id'],
+                    'publicity': td['publicity']
+                }
+                requests.put(child_url+'deletePublic', data=json.dumps(data), headers=headers)
+                return {}
+
             # check whether the last item of a certain type
             tds = requests.get(child_url + 'searchAtLoc?type=' + td['_type']).json()
             if len(tds) == 1:
@@ -213,6 +221,33 @@ def getApp(dbname):
                 return {}
             url = master_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             requests.delete(url)
+        
+        return {}
+
+    @app.route('/deletePublic', methods = ['PUT'])
+    def deletePublic(): 
+        if request.data():
+            body = json.loads(request.data)
+        id = body['id']
+        publicity = body['publicity']
+
+        host_url = request.host_url
+        url = host_url + 'td/' + td['_id']
+        requests.delete(url, headers={'If-Match': td['_etag']})
+
+        if publicity > 0:
+            url = host_url + 'loc_to_url/parent'
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                parent_url = response.json().get('url', None)
+                if parent_url:
+                    headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
+                    data = {
+                        'id': id,
+                        'publicity': publicity - 1
+                    }
+                    requests.put(parent_url + 'deletePublic', data=request.data, headers=headers)
         
         return {}
 
