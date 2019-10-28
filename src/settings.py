@@ -61,6 +61,9 @@ td = {
         },
         'id': {
             'type': 'string'
+        },
+        'publicity': {
+            'type': 'integer'
         }
     }
 }
@@ -87,14 +90,7 @@ public_td = {
     'resource_methods': ['GET', 'POST'],
     'item_methods': ['GET', 'DELETE'],
 
-    'schema': {
-        '_type': {
-            'type': 'string'
-        },
-        'id': {
-            'type': 'string'
-        }
-    }
+    'schema': td['schema']
 }
 
 loc_to_url_schema = {
