@@ -60,12 +60,11 @@ def getApp(dbname):
             
             if 'publicity' not in td:
                 td['publicity'] = 0
-            publicity = td['publicity']
             data = {
                 'td': td
             }
             requests.post(host_url + 'td', data=json.dumps(data), headers=headers)
-            if publicity > 0:
+            if td['publicity'] > 0:
                 requests.post(host_url + 'pushUp', data=json.dumps(data), headers=headers)
 
         elif child_loc is not None:
@@ -93,7 +92,7 @@ def getApp(dbname):
         
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(host_url + public_td, data=json.dumps(td), headers=headers)
+        requests.post(host_url + 'public_td', data=json.dumps(td), headers=headers)
 
         if td['publicity'] > 0:
             parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
