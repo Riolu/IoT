@@ -61,10 +61,12 @@ def getApp(dbname):
             if 'publicity' not in td:
                 td['publicity'] = 0
             publicity = td['publicity']
-            public_data = {
+            data = {
                 'td': td
             }
-            requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+            requests.post(host_url + 'td', data=json.dumps(data), headers=headers)
+            if publicity > 0:
+                requests.post(host_url + 'pushUp', data=json.dumps(data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
@@ -91,10 +93,9 @@ def getApp(dbname):
         
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        target_td = 'td' if td['publicity'] == 0 else 'public_td'
-        requests.post(host_url + target_td, data=json.dumps(td), headers=headers)
+        requests.post(host_url + public_td, data=json.dumps(td), headers=headers)
 
-        if td['publicity'] > 1:
+        if td['publicity'] > 0:
             parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
             if parent_url:
                 td['publicity'] -= 1
