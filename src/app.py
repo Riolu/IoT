@@ -63,7 +63,7 @@ def getApp(dbname):
             data = {
                 'td': td
             }
-            requests.post(host_url + 'td', data=json.dumps(data), headers=headers)
+            requests.post(url, data=json.dumps(data), headers=headers)
             if td['publicity'] > 0:
                 requests.post(host_url + 'pushUp', data=json.dumps(data), headers=headers)
 
@@ -89,6 +89,7 @@ def getApp(dbname):
     def pushUp():
         body = json.loads(request.data)
         td = body['td']
+        td['publicity'] -= 1
         
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -97,7 +98,6 @@ def getApp(dbname):
         if td['publicity'] > 0:
             parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
             if parent_url:
-                td['publicity'] -= 1
                 public_data = {
                     'td': td
                 }
