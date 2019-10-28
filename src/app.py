@@ -81,7 +81,7 @@ def getApp(dbname):
             data = request.data
             requests.post(url, data=data, headers=headers)
         
-        return data
+        return {}
 
 
     @app.route('/pushUp', methods = ['POST'])
