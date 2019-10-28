@@ -49,7 +49,9 @@ def getApp(dbname):
         if child_url is not None:
             # use Eve to post
             url = child_url + 'td'
-            data = json.dumps(td)
+            if 'publicity' not in td:
+                td['publicity'] = 0
+            requests.post(url, data=json.dumps(td), headers=headers)
 
             # update metadata
             info_data = {
@@ -58,14 +60,11 @@ def getApp(dbname):
             }
             requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
             
-            if 'publicity' not in td:
-                td['publicity'] = 0
-            data = {
+            public_data = {
                 'td': td
             }
-            requests.post(url, data=json.dumps(data), headers=headers)
             if td['publicity'] > 0:
-                requests.post(host_url + 'pushUp', data=json.dumps(data), headers=headers)
+                requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
 
         elif child_loc is not None:
             # go to lower database use register API
