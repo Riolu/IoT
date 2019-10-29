@@ -42,38 +42,46 @@ def getApp(dbname):
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        
+
         self_loc = getSelfName(host_url)
         child_url = retrieve(targetLoc, 'url', host_url, 'loc_to_url')
         child_loc = retrieve(targetLoc, 'childLoc', host_url, 'targetLoc_to_childLoc')
-        
+
         # if self_loc == targetLoc
         if child_url is not None:
             # use Eve to post
             url = child_url + 'td'
             if 'publicity' not in td:
                 td['publicity'] = 0
-            requests.post(url, data=json.dumps(td), headers=headers)
+            r = requests.post(url, data=json.dumps(td), headers=headers)
+            if r.status_code != 201:
+                return Response("{'message': 'Error in td insertion'}", status=500, mimetype='application/json')
 
             # update metadata
             info_data = {
                 'type': td['_type'],
                 'targetLoc': targetLoc
             }
-            requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
-            
+            r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
+            if r.status_code != 200:
+                return Response("{'message': 'Error in registerInfo'}", status=500, mimetype='application/json')
+
             public_data = {
                 'td': td
             }
             if td['publicity'] > 0:
-                requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+                r = requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+                if r.status_code != 200:
+                    return Response("{'message': 'Error in pushUp'}", status=500, mimetype='application/json')
 
         elif child_loc is not None:
             # go to lower database use register API
             child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             url = child_url + 'register'
             data = request.data
-            requests.post(url, data=data, headers=headers)
+            r = requests.post(url, data=data, headers=headers)
+            if r.status_code != 200:
+                return Response("{'message': 'Error in request child server'}", status=500, mimetype='application/json')
         else:
             # go to master database use register API
             master_url = retrieve('master', 'url', host_url, 'loc_to_url')
@@ -81,20 +89,27 @@ def getApp(dbname):
                 return {}
             url = master_url + 'register'
             data = request.data
-            requests.post(url, data=data, headers=headers)
+            r = requests.post(url, data=data, headers=headers)
+            if r.status_code != 200:
+                return Response("{'message': 'Error in master server'}", status=500, mimetype='application/json')
         
-        return {}
+        return {}, 200
 
 
     @app.route('/pushUp', methods = ['POST'])
     def pushUp():
-        body = json.loads(request.data)
-        td = body['td']
-        td['publicity'] -= 1
+        body = request.get_json()
+        try:
+            td = body['td']
+            td['publicity'] -= 1
+        except KeyError:
+            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
         
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(host_url + 'public_td', data=json.dumps(td), headers=headers)
+        r = requests.post(host_url + 'public_td', data=json.dumps(td), headers=headers)
+        if r.status_code != 201:
+            return Response("{'message': 'Error in public_td insertion'}", status=500, mimetype='application/json')
 
         if td['publicity'] > 0:
             parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
@@ -102,7 +117,9 @@ def getApp(dbname):
                 public_data = {
                     'td': td
                 }
-                requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+                r = requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+                if r.status_code != 200:
+                    return Response("{'message': 'Error in request parent server'}", status=500, mimetype='application/json')
 
         return {}
 
@@ -110,9 +127,10 @@ def getApp(dbname):
     @app.route('/searchPublic', methods = ['GET'])
     def searchPublic():
         loc = request.args.get('loc')
-
-        host_url = request.host_url
+        if not loc:
+            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
         
+        host_url = request.host_url
         self_loc = getSelfName(host_url)
         target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
         child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
@@ -127,19 +145,23 @@ def getApp(dbname):
             else:
                 master_url = retrieve('master', 'url', host_url, 'loc_to_url')
                 if host_url == master_url:
-                    return {}
+                    return Response("{'message': 'Target Location Not Found'}", status=404, mimetype='application/json')
                 target_url = master_url
-            response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
+            r = response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
+            if r.status_code != 200:
+                return Response("{'message': 'Error in request child server'}", status=500, mimetype='application/json')
 
         return json.dumps(response)
 
 
     @app.route('/registerInfo', methods = ['PUT'])
     def registerInfo():
-        if request.data:
-            body = json.loads(request.data)
-        _type = body['type']
-        targetLoc = body['targetLoc']
+        body = request.get_json()
+        try:
+            _type = body['type']
+            targetLoc = body['targetLoc']
+        except KeyError:
+            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
 
         # check whether the type is already in type_to_targetLoc
         type_locs = retrieve(_type, 'targetLocs', request.host_url, 'type_to_targetLocs')
@@ -169,7 +191,9 @@ def getApp(dbname):
 
         if parent_url:
             headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-            requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
+            r = requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
+            if r.status_code != 200:
+                return Response("{'message': 'Internal error updating registeration meta-info'}", status=500, mimetype='application/json')
         
         return {}
 
@@ -413,16 +437,16 @@ def getApp(dbname):
             url = response["url"]
         
         return {}
-
-        
+      
     @app.route('/searchAtLocDNS', methods = ['GET'])
     def searchAtLocDNS():
         target_loc = request.args.get('loc')
         _type = request.args.get('type')
         
+        host_url = request.host_url
         self_loc = getSelfName(host_url)
         if self_loc == target_loc:
-            url = request.host_url + 'td?where=_type=="{}"'.format(_type)
+            url = host_url + 'td?where=_type=="{}"'.format(_type)
             response = requests.get(url).json()['_items']
         else:
             target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
