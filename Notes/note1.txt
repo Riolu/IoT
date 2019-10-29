@@ -23,7 +23,7 @@ curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_t
 curl "http://192.168.1.189:5000/searchByLocType?loc=columbia&type=tv"
 curl "http://192.168.1.156:5001/searchByLocType?loc=columbia&type=tv"
 
-curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "xi"}, "publicity":5}' -H "Content-Type:application/json"
+curl http://192.168.1.156:5001/register -X POST -d '{"targetLoc":"cs", "td":{"_type": "xi"}, "publicity":5, "id": "fkjsdkl"}' -H "Content-Type:application/json"
 
 curl http://localhost:5000/searchPublic?loc=columbia
 

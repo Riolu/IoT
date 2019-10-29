@@ -1,7 +1,7 @@
 import json
 import requests
 from eve import Eve
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, Response
 from pymongo import MongoClient
 from .settings import getSettings
 
@@ -34,10 +34,11 @@ def getApp(dbname):
     @app.route('/register', methods = ['POST'])
     def register():
         body = request.get_json()
-        # if request.data:
-        #     body = json.loads(request.data)
-        targetLoc = body['targetLoc']
-        td = body['td']
+        try:
+            targetLoc = body['targetLoc']
+            td = body['td']
+        except KeyError e:
+            return Response({'message': 'Bad request data'}, status=400, mimetype='application/json')
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -394,5 +395,27 @@ def getApp(dbname):
             response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, id)).json()
 
         return json.dumps(response)
+
+    
+    # search by loc and type at a certain server, dns-like search structure
+    @app.route('/searchByLocTypeDNS', methods = ['GET']) 
+    def searchByLocTypeDNS():
+        _loc = request.args.get('loc')
+        _type = request.args.get('type')
+
+        # start from master
+        url = retrieve('master', 'url', request.host_url, 'loc_to_url')
+    
+        while True:
+            reponse = requests.get(url)
+            
+
+    @app.route('/searchAtLocDNS', methods = ['GET'])
+    def searchAtLocDNS():
+        target_loc = request.args.get('loc')
+        _type = request.args.get('type')
+        
+        self_loc = getSelfName(host_url)
+        if self_loc == _loc
 
     return app
