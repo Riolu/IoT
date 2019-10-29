@@ -38,7 +38,7 @@ def getApp(dbname):
             targetLoc = body['targetLoc']
             td = body['td']
         except KeyError:
-            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
+            return Response("Bad request data", status=400)
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -55,7 +55,7 @@ def getApp(dbname):
                 td['publicity'] = 0
             r = requests.post(url, data=json.dumps(td), headers=headers)
             if r.status_code != 201:
-                return Response("{'message': 'Error in td insertion'}", status=500, mimetype='application/json')
+                return r
 
             # update metadata
             info_data = {
@@ -64,7 +64,7 @@ def getApp(dbname):
             }
             r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
             if r.status_code != 200:
-                return Response("{'message': 'Error in registerInfo'}", status=500, mimetype='application/json')
+                return r
 
             public_data = {
                 'td': td
@@ -72,7 +72,7 @@ def getApp(dbname):
             if td['publicity'] > 0:
                 r = requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
                 if r.status_code != 200:
-                    return Response("{'message': 'Error in pushUp'}", status=500, mimetype='application/json')
+                    return r
 
         elif child_loc is not None:
             # go to lower database use register API
@@ -81,7 +81,7 @@ def getApp(dbname):
             data = request.data
             r = requests.post(url, data=data, headers=headers)
             if r.status_code != 200:
-                return Response("{'message': 'Error in request child server'}", status=500, mimetype='application/json')
+                return r
         else:
             # go to master database use register API
             master_url = retrieve('master', 'url', host_url, 'loc_to_url')
@@ -91,7 +91,7 @@ def getApp(dbname):
             data = request.data
             r = requests.post(url, data=data, headers=headers)
             if r.status_code != 200:
-                return Response("{'message': 'Error in master server'}", status=500, mimetype='application/json')
+                return r
         
         return {}, 200
 
@@ -103,13 +103,13 @@ def getApp(dbname):
             td = body['td']
             td['publicity'] -= 1
         except KeyError:
-            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
+            return Response("Bad request data", status=400)
         
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         r = requests.post(host_url + 'public_td', data=json.dumps(td), headers=headers)
         if r.status_code != 201:
-            return Response("{'message': 'Error in public_td insertion'}", status=500, mimetype='application/json')
+            return r
 
         if td['publicity'] > 0:
             parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
@@ -119,7 +119,7 @@ def getApp(dbname):
                 }
                 r = requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
                 if r.status_code != 200:
-                    return Response("{'message': 'Error in request parent server'}", status=500, mimetype='application/json')
+                    return r
 
         return {}
 
@@ -128,7 +128,7 @@ def getApp(dbname):
     def searchPublic():
         loc = request.args.get('loc')
         if not loc:
-            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
+            return Response("Bad request data", status=400)
         
         host_url = request.host_url
         self_loc = getSelfName(host_url)
@@ -145,11 +145,11 @@ def getApp(dbname):
             else:
                 master_url = retrieve('master', 'url', host_url, 'loc_to_url')
                 if host_url == master_url:
-                    return Response("{'message': 'Target Location Not Found'}", status=404, mimetype='application/json')
+                    return Response("Target location not found", status=404)
                 target_url = master_url
-            r = response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
-            if r.status_code != 200:
-                return Response("{'message': 'Error in request child server'}", status=500, mimetype='application/json')
+            response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
+            if response.status_code != 200:
+                return response
 
         return json.dumps(response)
 
@@ -161,7 +161,7 @@ def getApp(dbname):
             _type = body['type']
             targetLoc = body['targetLoc']
         except KeyError:
-            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
+            return Response("Bad request data", status=400)
 
         # check whether the type is already in type_to_targetLoc
         type_locs = retrieve(_type, 'targetLocs', request.host_url, 'type_to_targetLocs')
@@ -169,22 +169,28 @@ def getApp(dbname):
             return {}
         
         # add to type_to_targetLoc
-        client = MongoClient('localhost', 27017)
         db_name = getSelfName(request.host_url)
-        db = client[db_name]
-        collection = db['type_to_targetLocs']
+        if db_name is None:
+            return Response('Configuration Error, No db_name Found', status=404)
 
-        if collection.find_one({'type': _type}) is not None:
-            collection.update(
-                {'type': _type}, 
-                {'$push': {'targetLocs': targetLoc}}
-            )
-        else:
-            collection.insert_one(
-                {'type': _type, 
-                 'targetLocs': [targetLoc]}
-            )
-        client.close()
+        try:
+            client = MongoClient('localhost', 27017)
+            db = client[db_name]
+            collection = db['type_to_targetLocs']
+            
+            if collection.find_one({'type': _type}) is not None:
+                collection.update(
+                    {'type': _type}, 
+                    {'$push': {'targetLocs': targetLoc}}
+                )
+            else:
+                collection.insert_one(
+                    {'type': _type, 
+                    'targetLocs': [targetLoc]}
+                )
+            client.close()
+        except pymongo.errors.PyMongoError:
+            return Response('Database operation error', status=500)
 
         host_url = request.host_url
         parent_url = retrieve('parent', 'url', host_url, 'loc_to_url')
@@ -193,7 +199,7 @@ def getApp(dbname):
             headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
             r = requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
             if r.status_code != 200:
-                return Response("{'message': 'Internal error updating registeration meta-info'}", status=500, mimetype='application/json')
+                return r
         
         return {}
 
