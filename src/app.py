@@ -410,8 +410,7 @@ def getApp(dbname):
             response = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_loc, _type)).json()
             if "url" not in response: # td returned
                 return json.dumps(response)
-            else:
-                url = response["url"]
+            url = response["url"]
         
         return {}
 
@@ -432,6 +431,6 @@ def getApp(dbname):
                 target_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             response = {'url': target_url}
         
-        return response
+        return json.dumps(response)
 
     return app
