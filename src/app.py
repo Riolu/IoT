@@ -396,7 +396,7 @@ def getApp(dbname):
 
         return json.dumps(response)
 
-    
+    '''
     # search by loc and type at a certain server, dns-like search structure
     @app.route('/searchByLocTypeDNS', methods = ['GET']) 
     def searchByLocTypeDNS():
@@ -407,7 +407,9 @@ def getApp(dbname):
         url = retrieve('master', 'url', request.host_url, 'loc_to_url')
     
         while True:
-            reponse = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_l))
+            reponse = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_loc, _type)).json()
+            if "" in response
+
             
 
     @app.route('/searchAtLocDNS', methods = ['GET'])
@@ -417,6 +419,9 @@ def getApp(dbname):
         
         self_loc = getSelfName(host_url)
         if self_loc == target_loc:
-            
+            url = request.host_url + 'td?where=_type=="{}"'.format(_type)
+            response = requests.get(url).json()['_items']
+        else:
+            '''
 
     return app
