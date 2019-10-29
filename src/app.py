@@ -37,7 +37,7 @@ def getApp(dbname):
         try:
             targetLoc = body['targetLoc']
             td = body['td']
-        except KeyError e:
+        except KeyError:
             return Response({'message': 'Bad request data'}, status=400, mimetype='application/json')
 
         host_url = request.host_url
@@ -407,7 +407,7 @@ def getApp(dbname):
         url = retrieve('master', 'url', request.host_url, 'loc_to_url')
     
         while True:
-            reponse = requests.get(url)
+            reponse = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_l))
             
 
     @app.route('/searchAtLocDNS', methods = ['GET'])
@@ -416,6 +416,7 @@ def getApp(dbname):
         _type = request.args.get('type')
         
         self_loc = getSelfName(host_url)
-        if self_loc == _loc
+        if self_loc == target_loc:
+            
 
     return app
