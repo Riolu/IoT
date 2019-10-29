@@ -38,7 +38,7 @@ def getApp(dbname):
             targetLoc = body['targetLoc']
             td = body['td']
         except KeyError:
-            return Response({'message': 'Bad request data'}, status=400, mimetype='application/json')
+            return Response("{'message': 'Bad request data'}", status=400, mimetype='application/json')
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -396,7 +396,7 @@ def getApp(dbname):
 
         return json.dumps(response)
 
-    '''
+    
     # search by loc and type at a certain server, dns-like search structure
     @app.route('/searchByLocTypeDNS', methods = ['GET']) 
     def searchByLocTypeDNS():
@@ -407,11 +407,15 @@ def getApp(dbname):
         url = retrieve('master', 'url', request.host_url, 'loc_to_url')
     
         while True:
-            reponse = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_loc, _type)).json()
-            if "" in response
+            response = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_loc, _type)).json()
+            if "url" not in response: # td returned
+                return json.dumps(response)
+            else:
+                url = response["url"]
+        
+        return {}
 
-            
-
+        
     @app.route('/searchAtLocDNS', methods = ['GET'])
     def searchAtLocDNS():
         target_loc = request.args.get('loc')
@@ -422,6 +426,12 @@ def getApp(dbname):
             url = request.host_url + 'td?where=_type=="{}"'.format(_type)
             response = requests.get(url).json()['_items']
         else:
-            '''
+            target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
+            if target_url is None:
+                child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
+                target_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
+            response = {'url': target_url}
+        
+        return response
 
     return app
