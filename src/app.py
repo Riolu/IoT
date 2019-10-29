@@ -33,8 +33,9 @@ def getApp(dbname):
 
     @app.route('/register', methods = ['POST'])
     def register():
-        if request.data:
-            body = json.loads(request.data)
+        body = request.get_json()
+        # if request.data:
+        #     body = json.loads(request.data)
         targetLoc = body['targetLoc']
         td = body['td']
 
