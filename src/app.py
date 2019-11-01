@@ -65,7 +65,7 @@ def getApp(dbname):
                 'targetLoc': targetLoc
             }
             r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
-            if re.match(r'2..', str(response.status_code)):
+            if re.match(r'2..', str(r.status_code)):
                 return r
 
             public_data = {
@@ -73,7 +73,7 @@ def getApp(dbname):
             }
             if td['publicity'] > 0:
                 r = requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
-                if re.match(r'2..', str(response.status_code)):
+                if re.match(r'2..', str(r.status_code)):
                     return r
 
         elif child_loc is not None:
@@ -82,7 +82,7 @@ def getApp(dbname):
             url = child_url + 'register'
             data = request.data
             r = requests.post(url, data=data, headers=headers)
-            if re.match(r'2..', str(response.status_code)):
+            if re.match(r'2..', str(r.status_code)):
                 return r
         else:
             # go to master database use register API
@@ -92,7 +92,7 @@ def getApp(dbname):
             url = master_url + 'register'
             data = request.data
             r = requests.post(url, data=data, headers=headers)
-            if re.match(r'2..', str(response.status_code)):
+            if re.match(r'2..', str(r.status_code)):
                 return r
         
         return {}, 200
@@ -120,7 +120,7 @@ def getApp(dbname):
                     'td': td
                 }
                 r = requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
-                if re.match(r'2..', str(response.status_code)):
+                if re.match(r'2..', str(r.status_code)):
                     return r
 
         return {}
@@ -201,7 +201,7 @@ def getApp(dbname):
         if parent_url:
             headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
             r = requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
-            if re.match(r'2..', str(response.status_code)):
+            if re.match(r'2..', str(r.status_code)):
                 return r
         
         return {}
@@ -358,7 +358,7 @@ def getApp(dbname):
 
         delete_url = master_url + 'delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
         r = requests.delete(delete_url)
-        if re.match(r'2..', str(response.status_code)):
+        if re.match(r'2..', str(r.status_code)):
             return r
 
         register_url = master_url + 'register'
@@ -368,7 +368,7 @@ def getApp(dbname):
         }
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         r = requests.post(register_url, data=json.dumps(data), headers=headers)
-        if re.match(r'2..', str(response.status_code)):
+        if re.match(r'2..', str(r.status_code)):
             return r
 
         return {}
