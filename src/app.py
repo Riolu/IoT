@@ -151,6 +151,7 @@ def getApp(dbname):
             response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
             if response.status_code != 200:
                 return response
+            response = response.json()
 
         return json.dumps(response)
 
