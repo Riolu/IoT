@@ -1,5 +1,6 @@
 import json
 import requests
+import re
 from eve import Eve
 from flask import Flask, redirect, url_for, request, Response
 from pymongo import MongoClient
@@ -64,7 +65,7 @@ def getApp(dbname):
                 'targetLoc': targetLoc
             }
             r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
-            if r.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return r
 
             public_data = {
@@ -72,7 +73,7 @@ def getApp(dbname):
             }
             if td['publicity'] > 0:
                 r = requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
-                if r.status_code != 200:
+                if re.match(r'2..', str(response.status_code)):
                     return r
 
         elif child_loc is not None:
@@ -81,7 +82,7 @@ def getApp(dbname):
             url = child_url + 'register'
             data = request.data
             r = requests.post(url, data=data, headers=headers)
-            if r.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return r
         else:
             # go to master database use register API
@@ -91,7 +92,7 @@ def getApp(dbname):
             url = master_url + 'register'
             data = request.data
             r = requests.post(url, data=data, headers=headers)
-            if r.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return r
         
         return {}, 200
@@ -119,7 +120,7 @@ def getApp(dbname):
                     'td': td
                 }
                 r = requests.post(parent_url + 'pushUp', data=json.dumps(public_data), headers=headers)
-                if r.status_code != 200:
+                if re.match(r'2..', str(response.status_code)):
                     return r
 
         return {}
@@ -149,7 +150,7 @@ def getApp(dbname):
                     return Response("Target location not found", status=404)
                 target_url = master_url
             response = requests.get(target_url + 'searchPublic?loc={}'.format(loc))
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
             response = response.json()
 
@@ -200,7 +201,7 @@ def getApp(dbname):
         if parent_url:
             headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
             r = requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
-            if r.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return r
         
         return {}
@@ -231,7 +232,7 @@ def getApp(dbname):
                     'publicity': td['publicity']
                 }
                 response = requests.put(host_url+'deletePublic', data=json.dumps(data), headers=headers)
-                if response.status_code != 200:
+                if re.match(r'2..', str(response.status_code)):
                     return response
 
             # check whether the last item of a certain type
@@ -246,7 +247,7 @@ def getApp(dbname):
                 requests.put(child_url+'deleteInfo', data=json.dumps(info_data), headers=headers)
             url = child_url + 'td/' + td['_id']
             response = requests.delete(url, headers={'If-Match': td['_etag']})
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
 
         elif child_loc is not None:
@@ -254,7 +255,7 @@ def getApp(dbname):
             child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             url = child_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             response = requests.delete(url)
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
         else:
             # go to master database use register API
@@ -263,7 +264,7 @@ def getApp(dbname):
                 return Response("Target location not found", status=404)
             url = master_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
             response = requests.delete(url)
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
 
         return {}
@@ -283,7 +284,7 @@ def getApp(dbname):
             return Response("Public data to delete not found", status=404)
         url = host_url + 'public_td/' + td['_id']
         response = requests.delete(url, headers={'If-Match': td['_etag']})
-        if response.status_code != 200:
+        if re.match(r'2..', str(response.status_code)):
             return response
 
         if publicity > 0:
@@ -348,8 +349,8 @@ def getApp(dbname):
 
         master_url = retrieve('master', 'url', request.host_url, 'loc_to_url')
         response = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId))
-        if response.status_code != 200:
-            return response   
+        if not re.match(r'2..', str(response.status_code)):
+            return response
         td = response.json()
         
         for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:
@@ -357,9 +358,9 @@ def getApp(dbname):
 
         delete_url = master_url + 'delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
         r = requests.delete(delete_url)
-        if r.status_code != 200:
+        if re.match(r'2..', str(response.status_code)):
             return r
-            
+
         register_url = master_url + 'register'
         data = {
             'targetLoc': toLoc,
@@ -367,7 +368,7 @@ def getApp(dbname):
         }
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
         r = requests.post(register_url, data=json.dumps(data), headers=headers)
-        if r.status_code != 200:
+        if re.match(r'2..', str(response.status_code)):
             return r
 
         return {}
@@ -387,7 +388,7 @@ def getApp(dbname):
             # use Eve to get
             url = request.host_url + 'td?where=_type=="{}"'.format(_type)
             response = requests.get(url)
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
             result_list += response.json()['_items']
             type_locs.remove(self_name)
@@ -404,7 +405,7 @@ def getApp(dbname):
         
         for child_url in child_url_set:
             response = requests.get(child_url+'searchAtLoc?type='+_type)
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
             result_list.extend(response.json())
 
@@ -438,7 +439,7 @@ def getApp(dbname):
                 target_url = master_url
             response = requests.get(target_url + 'searchByLocType?loc={}&type={}'.format(loc, _type))
 
-        if response.status_code != 200:
+        if re.match(r'2..', str(response.status_code)):
             return response
         return json.dumps(response.json())
 
@@ -469,7 +470,7 @@ def getApp(dbname):
                     return {}
                 target_url = master_url
             response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, _id))
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
             response = response.json()
 
@@ -487,7 +488,7 @@ def getApp(dbname):
     
         while True:
             response = requests.get(url + 'searchAtLocIterative?loc={}&type={}'.format(_loc, _type))
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
             response = response.json()
             
@@ -509,7 +510,7 @@ def getApp(dbname):
         if self_loc == target_loc:
             url = host_url + 'td?where=_type=="{}"'.format(_type)
             response = requests.get(url)
-            if response.status_code != 200:
+            if re.match(r'2..', str(response.status_code)):
                 return response
             response = response.json()['_items']
         else:
