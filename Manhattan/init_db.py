@@ -4,13 +4,11 @@ if __name__ == '__main__':
     DB_NAME = "manhattan"
     URLS = [
         {"loc": "master", "url": "http://192.168.1.189:5000/"},
-        {"loc": "parent", "url": ""},
-        {"loc": "columbia", "url": "http://192.168.1.156:5001/"},
-        {"loc": "self", "url": "manhattan"}
+        {"loc": "parent", "url": "http://192.168.1.189:5000/"},
+        {"loc": "self", "url": "manhattan"},
+        {"loc": "mta", "url": "http://192.168.1.156:5002/"},
+        {"loc": "columbia", "url": "http://192.168.1.156:5003/"}
     ]
-    CHILD_LOCS = [
-        {"targetLoc": "irt", "childLoc": "columbia"},
-        {"targetLoc": "cs", "childLoc": "columbia"}
-    ]
+    CHILD_LOCS = []
 
     dbinit(DB_NAME, URLS, CHILD_LOCS)

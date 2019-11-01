@@ -3,6 +3,7 @@ import requests
 from eve import Eve
 from flask import Flask, redirect, url_for, request, Response
 from pymongo import MongoClient
+from pymongo.errors import PyMongoError
 from .settings import getSettings
 
 def getApp(dbname):
@@ -129,7 +130,7 @@ def getApp(dbname):
         loc = request.args.get('loc')
         if not loc:
             return Response("Bad request data", status=400)
-        
+
         host_url = request.host_url
         self_loc = getSelfName(host_url)
         target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
@@ -189,7 +190,7 @@ def getApp(dbname):
                     'targetLocs': [targetLoc]}
                 )
             client.close()
-        except pymongo.errors.PyMongoError:
+        except PyMongoError:
             return Response('Database operation error', status=500)
 
         host_url = request.host_url
@@ -207,6 +208,8 @@ def getApp(dbname):
     def delete():
         targetLoc = request.args.get('targetLoc')
         toDeleteId = request.args.get('id')
+        if not targetLoc or not toDeleteId:
+            return Response("Bad request data", status=400)
 
         host_url = request.host_url
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
@@ -214,22 +217,26 @@ def getApp(dbname):
         self_loc = getSelfName(host_url)
         child_url = retrieve(targetLoc, 'url', host_url, 'loc_to_url')
         child_loc = retrieve(targetLoc, 'childLoc', host_url, 'targetLoc_to_childLoc')
-        
+
         if child_url is not None:
             # use Eve to delete
             td = retrieveAll(toDeleteId, child_url, 'td')
             if td is None:
-                return {}
+                return Response("Thing decription not found", status=404)
 
             if td['publicity'] and td['publicity'] > 0:
                 data = {
                     'id': td['id'],
                     'publicity': td['publicity']
                 }
-                requests.put(host_url+'deletePublic', data=json.dumps(data), headers=headers)
+                response = requests.put(host_url+'deletePublic', data=json.dumps(data), headers=headers)
+                if response.status_code != 200:
+                    return response
 
             # check whether the last item of a certain type
-            tds = requests.get(child_url + 'searchAtLoc?type=' + td['_type']).json()
+            response = requests.get(child_url + 'searchAtLoc?type=' + td['_type'])
+            if response.status_code == 200:
+                tds = response.json()
             if len(tds) == 1:
                 info_data = {
                     'type': td['_type'],
@@ -237,34 +244,46 @@ def getApp(dbname):
                 }
                 requests.put(child_url+'deleteInfo', data=json.dumps(info_data), headers=headers)
             url = child_url + 'td/' + td['_id']
-            requests.delete(url, headers={'If-Match': td['_etag']})
+            response = requests.delete(url, headers={'If-Match': td['_etag']})
+            if response.status_code != 200:
+                return response
 
         elif child_loc is not None:
             # go to lower database use register API
             child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             url = child_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
-            requests.delete(url)
+            response = requests.delete(url)
+            if response.status_code != 200:
+                return response
         else:
             # go to master database use register API
             master_url = retrieve('master', 'url', host_url, 'loc_to_url')
             if master_url == host_url:
-                return {}
+                return Response("Target location not found", status=404)
             url = master_url + 'delete?targetLoc={}&id={}'.format(targetLoc,toDeleteId)
-            requests.delete(url)
-        
+            response = requests.delete(url)
+            if response.status_code != 200:
+                return response
+
         return {}
 
     @app.route('/deletePublic', methods = ['PUT'])
     def deletePublic(): 
-        if request.data:
-            body = json.loads(request.data)
-        id = body['id']
-        publicity = body['publicity']
+        body = request.get_json()
+        try:
+            id = body['id']
+            publicity = body['publicity']
+        except KeyError:
+            return Response("Internal server error deleting public data", status=500)
 
         host_url = request.host_url
         td = retrieveAll(id, host_url, 'public_td')
+        if td is None:
+            return Response("Public data to delete not found", status=404)
         url = host_url + 'public_td/' + td['_id']
-        requests.delete(url, headers={'If-Match': td['_etag']})
+        response = requests.delete(url, headers={'If-Match': td['_etag']})
+        if response.status_code != 200:
+            return response
 
         if publicity > 0:
             url = host_url + 'loc_to_url/parent'
@@ -284,22 +303,27 @@ def getApp(dbname):
 
     @app.route('/deleteInfo', methods = ['PUT'])
     def deleteInfo():
-        if request.data:
-            body = json.loads(request.data)
-        type = body['type']
-        targetLoc = body['targetLoc']
+        body = request.get_json()
+        try:
+            type = body['type']
+            targetLoc = body['targetLoc']
+        except KeyError:
+            return Response("Bad request data", status=400)
 
-        # delete from type_to_targetLoc
-        client = MongoClient('localhost', 27017)
-        db_name = getSelfName(request.host_url)
-        db = client[db_name]
-        collection = db['type_to_targetLocs']
+        try:
+            # delete from type_to_targetLoc
+            client = MongoClient('localhost', 27017)
+            db_name = getSelfName(request.host_url)
+            db = client[db_name]
+            collection = db['type_to_targetLocs']
 
-        collection.update(
-            {'type': type}, 
-            {'$pull': {'targetLocs': targetLoc}}
-        )
-        client.close()
+            collection.update(
+                {'type': type}, 
+                {'$pull': {'targetLocs': targetLoc}}
+            )
+            client.close()
+        except PyMongoError:
+            return Response('Database operation error', status=500)
 
         host_url = request.host_url
         url = host_url + 'loc_to_url/parent'
@@ -318,41 +342,52 @@ def getApp(dbname):
         fromLoc = request.args.get('fromLoc')
         toLoc = request.args.get('toLoc')
         toReplaceId = request.args.get('id')
+        if not fromLoc or not toLoc or not toReplaceId:
+            return Response("Bad request data", status=400)
 
         master_url = retrieve('master', 'url', request.host_url, 'loc_to_url')
-        
-        td = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId)).json()
+        response = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId))
+        if response.status_code == 200:
+            td = response.json()
         
         for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:
             td.pop(key, None)
-        print(td)
 
         delete_url = master_url + 'delete?targetLoc={}&id={}'.format(fromLoc,toReplaceId)
-        requests.delete(delete_url)
-
+        r = requests.delete(delete_url)
+        if r.status_code != 200:
+            return r
+            
         register_url = master_url + 'register'
         data = {
             'targetLoc': toLoc,
             'td': td
         }
         headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-        requests.post(register_url, data=json.dumps(data), headers=headers)
+        r = requests.post(register_url, data=json.dumps(data), headers=headers)
+        if r.status_code != 200:
+            return r
 
-        return data
+        return {}
 
     
     # search by type at a certain loc
     @app.route('/searchAtLoc', methods = ['GET'])
     def searchAtLoc():
-        type = request.args.get('type')
-        type_locs = retrieve(type, 'targetLocs', request.host_url, 'type_to_targetLocs') or []
+        _type = request.args.get('type')
+        if not _type:
+            return Response("Internal server error searching at location", status=500)
+        type_locs = retrieve(_type, 'targetLocs', request.host_url, 'type_to_targetLocs') or []
 
         self_name = getSelfName(request.host_url)
         result_list = list()
         if self_name in type_locs:
             # use Eve to get
-            url = request.host_url + 'td?where=_type=="{}"'.format(type)
-            result_list += requests.get(url).json()['_items']
+            url = request.host_url + 'td?where=_type=="{}"'.format(_type)
+            response = requests.get(url)
+            if response.status_code != 200:
+                return response
+            result_list += response.json()['_items']
             type_locs.remove(self_name)
         
         child_url_set = set()
@@ -366,15 +401,20 @@ def getApp(dbname):
                 child_url_set.add(child_url)
         
         for child_url in child_url_set:
-            result_list.extend(requests.get(child_url+'searchAtLoc?type='+type).json())
-        
+            response = requests.get(child_url+'searchAtLoc?type='+_type)
+            if response.status_code != 200:
+                return response
+            result_list.extend(response.json())
+
         return json.dumps(result_list)
 
 
     @app.route('/searchByLocType', methods = ['GET'])
     def searchByLocType():
         loc = request.args.get('loc')
-        type = request.args.get('type')
+        _type = request.args.get('type')
+        if not loc or not _type:
+            return Response("Bad request data", status=400)
 
         host_url = request.host_url
         
@@ -384,7 +424,7 @@ def getApp(dbname):
 
         if self_loc == loc or target_url is not None:
             target_url = host_url if self_loc==loc else target_url
-            response = requests.get(target_url + 'searchAtLoc?type='+type)
+            response = requests.get(target_url + 'searchAtLoc?type='+_type)
         else:
             if child_loc is not None:
                 child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
@@ -394,25 +434,29 @@ def getApp(dbname):
                 if host_url == master_url:
                     return {}
                 target_url = master_url
-            response = requests.get(target_url + 'searchByLocType?loc={}&type={}'.format(loc, type))
+            response = requests.get(target_url + 'searchByLocType?loc={}&type={}'.format(loc, _type))
 
+        if response.status_code != 200:
+            return response
         return json.dumps(response.json())
 
-    
+
     @app.route('/searchByLocId', methods = ['GET'])
     def searchByLocId():
         loc = request.args.get('loc')
-        id = request.args.get('id')
+        _id = request.args.get('id')
+        if not loc or not _id:
+            return Response("Bad request data", status=400)
 
         host_url = request.host_url
-        
+
         self_loc = getSelfName(host_url)
         target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
         child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
 
         if self_loc == loc or target_url is not None:
             target_url = host_url if self_loc==loc else target_url
-            response = retrieveAll(id, target_url, 'td')
+            response = retrieveAll(_id, target_url, 'td')
         else:
             if child_loc is not None:
                 child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
@@ -422,14 +466,16 @@ def getApp(dbname):
                 if host_url == master_url:
                     return {}
                 target_url = master_url
-            response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, id)).json()
+            response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, _id)).json()
 
+        if response.status_code != 200:
+            return response
         return json.dumps(response)
 
     
     # search by loc and type at a certain server, dns-like search structure
-    @app.route('/searchByLocTypeDNS', methods = ['GET']) 
-    def searchByLocTypeDNS():
+    @app.route('/searchByLocTypeIterative', methods = ['GET']) 
+    def searchByLocTypeIterative():
         _loc = request.args.get('loc')
         _type = request.args.get('type')
 
@@ -437,23 +483,32 @@ def getApp(dbname):
         url = retrieve('master', 'url', request.host_url, 'loc_to_url')
     
         while True:
-            response = requests.get(url + 'searchAtLocDNS?loc={}&type={}'.format(_loc, _type)).json()
+            response = requests.get(url + 'searchAtLocIterative?loc={}&type={}'.format(_loc, _type))
+            if response.status_code != 200:
+                return response
+            response = response.json()
+            
             if "url" not in response: # td returned
                 return json.dumps(response)
             url = response["url"]
         
         return {}
       
-    @app.route('/searchAtLocDNS', methods = ['GET'])
-    def searchAtLocDNS():
+    @app.route('/searchAtLocIterative', methods = ['GET'])
+    def searchAtLocIterative():
         target_loc = request.args.get('loc')
         _type = request.args.get('type')
+        if not target_loc or not _type:
+            return Response("Bad request data", status=400)
         
         host_url = request.host_url
         self_loc = getSelfName(host_url)
         if self_loc == target_loc:
             url = host_url + 'td?where=_type=="{}"'.format(_type)
-            response = requests.get(url).json()['_items']
+            response = requests.get(url)
+            if response.status_code != 200:
+                return response
+            response = response.json()['_items']
         else:
             target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
             if target_url is None:
