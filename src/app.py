@@ -348,8 +348,9 @@ def getApp(dbname):
 
         master_url = retrieve('master', 'url', request.host_url, 'loc_to_url')
         response = requests.get(master_url + 'searchByLocId?loc={}&id={}'.format(fromLoc, toReplaceId))
-        if response.status_code == 200:
-            td = response.json()
+        if response.status_code != 200:
+            return response   
+        td = response.json()
         
         for key in ['_id', '_updated', '_created', '_etag', '_links', 'parent']:
             td.pop(key, None)
@@ -467,10 +468,11 @@ def getApp(dbname):
                 if host_url == master_url:
                     return {}
                 target_url = master_url
-            response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, _id)).json()
+            response = requests.get(target_url + 'searchByLocId?loc={}&id={}'.format(loc, _id))
+            if response.status_code != 200:
+                return response
+            response = response.json()
 
-        if response.status_code != 200:
-            return response
         return json.dumps(response)
 
     
