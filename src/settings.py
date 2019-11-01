@@ -43,7 +43,7 @@ td = {
     # additional read-only entry point. This way consumers can also perform
     # GET requests at '/people/<lastname>'.
     'additional_lookup': {
-        'url': 'regex("[.]+")',
+        'url': 'regex(".*?")',
         'field': 'id'
     },
 
@@ -78,7 +78,7 @@ public_td = {
     # additional read-only entry point. This way consumers can also perform
     # GET requests at '/people/<lastname>'.
     'additional_lookup': {
-        'url': 'regex("[.]+")',
+        'url': 'regex(".*?")',
         'field': 'id'
     },
 
