@@ -245,7 +245,7 @@ def getApp(dbname):
             if len(tds) == 1:
                 info_data = {
                     'type': td['_type'],
-                    'targetLoc': targetLoc
+                    'childLoc': targetLoc
                 }
                 requests.put(child_url+'deleteInfo', data=json.dumps(info_data), headers=headers)
             url = child_url + 'td/' + td['_id']
@@ -310,8 +310,8 @@ def getApp(dbname):
     def deleteInfo():
         body = request.get_json()
         try:
-            type = body['type']
-            targetLoc = body['targetLoc']
+            _type = body['type']
+            childLoc = body['childLoc']
         except KeyError:
             return Response("Bad request data", status=400)
 
@@ -320,11 +320,11 @@ def getApp(dbname):
             client = MongoClient('localhost', 27017)
             db_name = getSelfName(request.host_url)
             db = client[db_name]
-            collection = db['type_to_targetLocs']
+            collection = db['type_to_childLocs']
 
             collection.update(
-                {'type': type}, 
-                {'$pull': {'targetLocs': targetLoc}}
+                {'type': _type}, 
+                {'$pull': {'childLocs': childLoc}}
             )
             client.close()
         except PyMongoError:
