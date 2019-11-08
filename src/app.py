@@ -178,7 +178,7 @@ def getApp(dbname):
         try:
             client = MongoClient('localhost', 27017)
             db = client[db_name]
-            collection = db['type_to_targetLocs']
+            collection = db['type_to_childLocs']
             
             if collection.find_one({'type': _type}) is not None:
                 collection.update(
@@ -188,7 +188,7 @@ def getApp(dbname):
             else:
                 collection.insert_one(
                     {'type': _type, 
-                    'targetLocs': [childLoc]}
+                    'childLocs': [childLoc]}
                 )
             client.close()
         except PyMongoError:
