@@ -49,7 +49,6 @@ def getApp(dbname):
         child_url = retrieve(targetLoc, 'url', host_url, 'loc_to_url')
         child_loc = retrieve(targetLoc, 'childLoc', host_url, 'targetLoc_to_childLoc')
 
-        # if self_loc == targetLoc
         if child_url is not None:
             # use Eve to post
             url = child_url + 'td'
@@ -162,13 +161,13 @@ def getApp(dbname):
         body = request.get_json()
         try:
             _type = body['type']
-            targetLoc = body['targetLoc']
+            childLoc = body['childLoc']
         except KeyError:
             return Response("Bad request data", status=400)
 
         # check whether the type is already in type_to_targetLoc
-        type_locs = retrieve(_type, 'targetLocs', request.host_url, 'type_to_targetLocs')
-        if type_locs is not None and targetLoc in type_locs:
+        type_locs = retrieve(_type, 'childLocs', request.host_url, 'type_to_childLocs')
+        if type_locs is not None and childLoc in type_locs:
             return {}
         
         # add to type_to_targetLoc
@@ -184,12 +183,12 @@ def getApp(dbname):
             if collection.find_one({'type': _type}) is not None:
                 collection.update(
                     {'type': _type}, 
-                    {'$push': {'targetLocs': targetLoc}}
+                    {'$push': {'childLocs': childLoc}}
                 )
             else:
                 collection.insert_one(
                     {'type': _type, 
-                    'targetLocs': [targetLoc]}
+                    'targetLocs': [childLoc]}
                 )
             client.close()
         except PyMongoError:
@@ -200,7 +199,10 @@ def getApp(dbname):
 
         if parent_url:
             headers = {'Content-Type': 'application/json', 'Accept-Charset': 'UTF-8'}
-            r = requests.put(parent_url + 'registerInfo', data=request.data, headers=headers)
+            new_data = request.get_json()
+            self_loc = getSelfName(request.host_url)
+            new_data['childLoc'] = self_loc
+            r = requests.put(parent_url + 'registerInfo', data=json.dumps(new_data), headers=headers)
             if not re.match(r'2..', str(r.status_code)):
                 return r
         
