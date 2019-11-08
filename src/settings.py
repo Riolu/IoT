@@ -113,24 +113,24 @@ loc_to_url = {
     'schema': loc_to_url_schema
 }
 
-type_to_targetLocs_schema = {
+type_to_childLocs_schema = {
     'type': {
         'type': 'string'
     },
-    'targetLocs': {
+    'childLocs': {
         'type': 'list'
     }
 }
 
-type_to_targetLocs = {
-    'item_title': 'type_to_targetLocs',
+type_to_childLocs = {
+    'item_title': 'type_to_childLocs',
     'additional_lookup': {
         'url': 'regex("[\w]+")',
         'field': 'type'
     },
     'resource_methods': ['GET', 'POST'],
     'item_methods': ['GET', 'PUT'],
-    'schema': type_to_targetLocs_schema
+    'schema': type_to_childLocs_schema
 }
 
 targetLoc_to_childLoc_schema = {
@@ -176,7 +176,7 @@ def getSettings(dbname):
         'DOMAIN': {
             'td': td,
             'loc_to_url': loc_to_url,
-            'type_to_targetLocs': type_to_targetLocs,
+            'type_to_childLocs': type_to_childLocs,
             'targetLoc_to_childLoc': targetLoc_to_childLoc,
             'public_td': public_td
         }
