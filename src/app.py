@@ -383,7 +383,7 @@ def getApp(dbname):
         _type = request.args.get('type')
         if not _type:
             return Response("Internal server error searching at location", status=500)
-        type_locs = retrieve(_type, 'targetLocs', request.host_url, 'type_to_targetLocs') or []
+        type_locs = retrieve(_type, 'childLocs', request.host_url, 'type_to_childLocs') or []
 
         self_name = getSelfName(request.host_url)
         result_list = list()
@@ -397,14 +397,12 @@ def getApp(dbname):
             type_locs.remove(self_name)
         
         child_url_set = set()
-        for target_loc in type_locs:
-            target_url = retrieve(target_loc, 'url', request.host_url, 'loc_to_url')
-            if target_url:
-                child_url_set.add(target_url)
-            else:
-                child_loc = retrieve(target_loc, 'childLoc', request.host_url, 'targetLoc_to_childLoc')
-                child_url = retrieve(child_loc, 'url', request.host_url, 'loc_to_url')
+        for child_loc in type_locs:
+            child_url = retrieve(child_loc, 'url', request.host_url, 'loc_to_url')
+            if child_url:
                 child_url_set.add(child_url)
+            else:
+                return Response("Internal server error searching at location", status=500)
         
         for child_url in child_url_set:
             response = requests.get(child_url+'searchAtLoc?type='+_type)
