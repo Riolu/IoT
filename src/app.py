@@ -61,7 +61,7 @@ def getApp(dbname):
             # update metadata
             info_data = {
                 'type': td['_type'],
-                'targetLoc': targetLoc
+                'childLoc': targetLoc
             }
             r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
             if not re.match(r'2..', str(r.status_code)):
