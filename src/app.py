@@ -167,6 +167,7 @@ def getApp(dbname):
 
         # check whether the type is already in type_to_targetLoc
         type_locs = retrieve(_type, 'childLocs', request.host_url, 'type_to_childLocs')
+        print(type_locs)
         if type_locs is not None and childLoc in type_locs:
             return {}
         
