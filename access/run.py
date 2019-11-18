@@ -117,7 +117,7 @@ if __name__ == '__main__':
                 'expiration': time.time()}
             )
         client.close()
-        
+        return {}
 
     # @app.route('/delegate')
 
