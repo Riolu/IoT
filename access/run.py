@@ -32,7 +32,7 @@ operation = {
 def isSatisfiable(operation_permission, decoded_permission):
     if operation_permission['resource'] != decoded_permission['resource']:
         return False
-    for key, value in operation_permission['params']:
+    for key, value in operation_permission['params'].items():
         if key not in decoded_permission or (
                 value != decoded_permission[key]
                 and decoded_permission[key] != '*'):
@@ -102,12 +102,12 @@ if __name__ == '__main__':
 
         if operation['method'] == 'GET':
             get_url = operation_url + '?' + '&'.join(
-                ['{}={}'.format(k, v) for k, v in operation['params']])
+                ['{}={}'.format(k, v) for k, v in operation['params'].items()])
             response = requests.get(get_url)
 
         elif operation['method'] == 'DELETE':
             delete_url = operation_url + '?' + '&'.join(
-                ['{}={}'.format(k, v) for k, v in operation['params']])
+                ['{}={}'.format(k, v) for k, v in operation['params'].items()])
             response = requests.delete(delete_url)
 
         elif operation['method'] == 'POST':
@@ -125,5 +125,6 @@ if __name__ == '__main__':
 
         response = response.json()
         return json.dumps(response)
+
 
     app.run(host='0.0.0.0', port=4999)

@@ -16,7 +16,7 @@ def main():
         'permission': {
             'resource': 'searchByLocType',
             'params': {
-                'loc': 'NewYork',
+                'loc': 'columbia',
                 'type': 'tv'
             }
         }
@@ -25,7 +25,7 @@ def main():
         'permission': {
             'resource': 'delete',
             'params': {
-                'targetLoc': 'NewYork',
+                'targetLoc': 'columbia',
                 'id': '*'
             }
         }
