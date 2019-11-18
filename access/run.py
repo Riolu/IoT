@@ -90,7 +90,8 @@ if __name__ == '__main__':
         except KeyError:
             return Response("Bad request data", status=400)
 
-        if token != "admin" or not verify(token, SECRET, operation):
+
+        if token != "admin" and not verify(token, SECRET, operation):
             return Response("Access Denied", status=403)
 
         operation_url = MASTER_URL + operation['resource']
