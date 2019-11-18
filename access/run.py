@@ -2,9 +2,13 @@ import json
 import re
 from .config import Config
 from flask import Flask, request, Response
+from pymongo import MongoClient
 import jwt
 import requests
 import datetime
+import time;
+
+
 '''
 type = tv
 check all match
@@ -46,6 +50,17 @@ def verify(token, secret, operation):
         key: operation[key]
         for key in ['resource', 'params']
     }
+
+    db_name = 'access'
+    client = MongoClient('localhost', 27017)
+    db = client[db_name]
+    collection = db['token_to_expiration']
+    
+    token_expiration = collection.find_one({'token': token})
+    client.close()
+    if token_expiration is not None and token_expiration['expiration'] < time.time():
+        return false 
+
     return isSatisfiable(operation_permission, decoded_permission)
 
 
@@ -77,7 +92,33 @@ if __name__ == '__main__':
 
         return _requestToken(SECRET, permission, _id)
 
-    # @app.route('/revoke')
+    
+    @app.route('/revoke', methods=['POST'])
+    def revoke():
+        body = request.get_json()
+        try:
+            token = body['token']
+        except KeyError:
+            return Response("Bad request data", status=400)
+        
+        db_name = 'access'
+        client = MongoClient('localhost', 27017)
+        db = client[db_name]
+        collection = db['token_to_expiration']
+        
+        if collection.find_one({'token': token}) is not None:
+            collection.update(
+                {'token': token}, 
+                {'expiration': time.time()}
+            )
+        else:
+            collection.insert_one(
+                {'token': token, 
+                'expiration': time.time()}
+            )
+        client.close()
+        
+
     # @app.route('/delegate')
 
 
@@ -89,7 +130,6 @@ if __name__ == '__main__':
             token = body['token']
         except KeyError:
             return Response("Bad request data", status=400)
-
 
         if token != "admin" and not verify(token, SECRET, operation):
             return Response("Access Denied", status=403)
@@ -114,7 +154,7 @@ if __name__ == '__main__':
             response = requests.post(operation_url,
                                      data=json.dumps(operation['data']),
                                      headers=headers)
-        
+
         elif operation['method'] == 'PUT':
             response = requests.put(operation_url,
                                     data=json.dumps(operation['data']),

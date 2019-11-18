@@ -1,9 +1,3 @@
-[
-    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJyZWdpc3RlciIsInBhcmFtcyI6e319fQ.YS1bixkoQ2DbUA6kDoN3dAmz3M_S3tc2R8P-gjiAdvM, 
-    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ5Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJzZWFyY2hCeUxvY1R5cGUiLCJwYXJhbXMiOnsibG9jIjoiTmV3WW9yayIsInR5cGUiOiJ0diJ9fX0.WP5UfY7Yy66IYnr3lRziyS4lF5fCXwcUJ2uwQxOBQLw, 
-    eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ6Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJkZWxldGUiLCJwYXJhbXMiOnsidGFyZ2V0TG9jIjoiTmV3WW9yayIsImlkIjoiKiJ9fX0.hKgrrqXU7KOOlg5DAaBMHhsTqHziqNDp0ASm4BfsJKY
-]
-
 curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJyZWdpc3RlciIsInBhcmFtcyI6e319fQ.YS1bixkoQ2DbUA6kDoN3dAmz3M_S3tc2R8P-gjiAdvM","operation":{"resource":"register","method":"POST","params":{},"data":{"td":{"_type":"tv","id":"fkjsdkl"},"targetLoc":"columbia"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
 curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ5Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJzZWFyY2hCeUxvY1R5cGUiLCJwYXJhbXMiOnsibG9jIjoiY29sdW1iaWEiLCJ0eXBlIjoidHYifX19.8WSsZBCygMYg16qOg0Btp8X59Qz6vlpvGSikHI3yI_c","operation":{"resource":"searchByLocType","method":"GET","params":{"loc":"columbia","type":"tv"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
 
