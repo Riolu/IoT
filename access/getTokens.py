@@ -1,7 +1,8 @@
 from .run import _requestToken
 from .config import Config
+import jwt
 
-if __name__ == '__main__':
+def main():
     SECRET = Config.SECRET
 
     data = [{
@@ -34,4 +35,12 @@ if __name__ == '__main__':
         _requestToken(SECRET, item['permission'], item['id']) for item in data
     ]
 
+    print(tokens)
+
+    for token in tokens:
+        print(jwt.decode(token, SECRET, 'HS256'))
+
     return tokens
+
+if __name__ == '__main__':
+    main()

@@ -61,7 +61,7 @@ def _requestToken(secret, permission, _id):
 
 if __name__ == '__main__':
 
-    app = Flask()
+    app = Flask("access")
     app.config.from_object(Config)
     SECRET = app.config['SECRET']
     MASTER_URL = app.config['MASTER_URL']
@@ -79,6 +79,8 @@ if __name__ == '__main__':
 
     # @app.route('/revoke')
     # @app.route('/delegate')
+
+
     @app.route('/operate', methods=['POST'])
     def operate():
         body = request.get_json()
