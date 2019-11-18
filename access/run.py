@@ -59,7 +59,7 @@ def verify(token, secret, operation):
     token_expiration = collection.find_one({'token': token})
     client.close()
     if token_expiration is not None and token_expiration['expiration'] < time.time():
-        return false 
+        return False 
 
     return isSatisfiable(operation_permission, decoded_permission)
 
