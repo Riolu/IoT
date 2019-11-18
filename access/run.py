@@ -33,9 +33,9 @@ def isSatisfiable(operation_permission, decoded_permission):
     if operation_permission['resource'] != decoded_permission['resource']:
         return False
     for key, value in operation_permission['params'].items():
-        if key not in decoded_permission or (
-                value != decoded_permission[key]
-                and decoded_permission[key] != '*'):
+        if key not in decoded_permission['params'] or (
+                value != decoded_permission['params'][key]
+                and decoded_permission['params'][key] != '*'):
             return False
     return True
 
