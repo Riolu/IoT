@@ -124,7 +124,7 @@ def getApp(dbname):
 
         return {}
 
-    
+
     @app.route('/searchPublic', methods = ['GET'])
     def searchPublic():
         loc = request.args.get('loc')
@@ -342,8 +342,8 @@ def getApp(dbname):
         
         return {}
 
-    @app.route('/replace', methods = ['PUT'])
-    def replace():
+    @app.route('/relocate', methods = ['PUT'])
+    def relocate():
         fromLoc = request.args.get('fromLoc')
         toLoc = request.args.get('toLoc')
         toReplaceId = request.args.get('id')
