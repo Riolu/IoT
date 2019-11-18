@@ -109,7 +109,8 @@ if __name__ == '__main__':
         if collection.find_one({'token': token}) is not None:
             collection.update(
                 {'token': token}, 
-                {'expiration': time.time()}
+                {'token': token,
+                'expiration': time.time()}
             )
         else:
             collection.insert_one(
