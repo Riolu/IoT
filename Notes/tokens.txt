@@ -17,4 +17,16 @@ new token x assigned to y
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.lQeI8XHTKa6UDQ8B6WVF9Vtbx-EkEFzSi0tX9xGxV9U
 
 y register
-curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ5IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoQnlMb2NUeXBlIiwicGFyYW1zIjp7ImxvYyI6ImNvbHVtYmlhIiwidHlwZSI6InR2In19fQ.G_WrUrE13CtXYMLXyh6a_NydswMDRV2AomEzL833B0U","operation":{"resource":"register","method":"POST","params":{},"data":{"td":{"_type":"tv","id":"y_tv"},"targetLoc":"columbia"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.lQeI8XHTKa6UDQ8B6WVF9Vtbx-EkEFzSi0tX9xGxV9U","operation":{"resource":"register","method":"POST","params":{},"data":{"td":{"_type":"tv","id":"y_tv"},"targetLoc":"columbia"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+
+#====================================
+
+// instruction for delegate
+curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJyZWdpc3RlciIsInBhcmFtcyI6e319fQ.YS1bixkoQ2DbUA6kDoN3dAmz3M_S3tc2R8P-gjiAdvM","childID":"y", "expiredTime":1574456160}' -H "Content-Type: application/json" -X POST http://localhost:4999/delegate
+
+new token x assigned to y
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.lQeI8XHTKa6UDQ8B6WVF9Vtbx-EkEFzSi0tX9xGxV9U
+
+y register
+curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.lQeI8XHTKa6UDQ8B6WVF9Vtbx-EkEFzSi0tX9xGxV9U","operation":{"resource":"register","method":"POST","params":{},"data":{"td":{"_type":"akhs","id":"y_xdaf"},"targetLoc":"columbia"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate

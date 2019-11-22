@@ -8,9 +8,6 @@ import requests
 import datetime
 import time
 from jwt.exceptions import DecodeError
-
-
-
 '''
 type = tv
 check all match
@@ -35,6 +32,7 @@ operation = {
 }
 '''
 
+
 def isSatisfiable(operation_permission, decoded_permission):
     if operation_permission['resource'] != decoded_permission['resource']:
         return False
@@ -45,6 +43,7 @@ def isSatisfiable(operation_permission, decoded_permission):
             return False
     return True
 
+
 def isStaleToken(token):
     db_name = 'access'
     client = MongoClient('localhost', 27017)
@@ -53,7 +52,9 @@ def isStaleToken(token):
 
     token_expiration = collection.find_one({'token': token})
     client.close()
-    return token_expiration is not None and token_expiration['expiration'] < time.time()
+    return token_expiration is not None and token_expiration[
+        'expiration'] < time.time()
+
 
 def verify(token, secret, operation):
     decoded = jwt.decode(token, secret, algorithm='HS256')
@@ -73,7 +74,7 @@ def _requestToken(secret, permission, _id):
         'permission': permission
     },
                          secret,
-                         algorithm='HS256')
+                         algorithm='HS256').decode('ascii')
     return encoded
 
 
@@ -95,7 +96,6 @@ if __name__ == '__main__':
 
         return _requestToken(SECRET, permission, _id)
 
-
     @app.route('/revoke', methods=['POST'])
     def revoke():
         body = request.get_json()
@@ -110,16 +110,12 @@ if __name__ == '__main__':
         collection = db['token_to_expiration']
 
         if collection.find_one({'token': token}) is not None:
-            collection.update(
-                {'token': token},
-                {'token': token,
-                'expiration': time.time()}
-            )
+            collection.update({'token': token}, {
+                'token': token,
+                'expiration': time.time()
+            })
         else:
-            collection.insert_one(
-                {'token': token,
-                'expiration': time.time()}
-            )
+            collection.insert_one({'token': token, 'expiration': time.time()})
         client.close()
         return {}
 
@@ -140,7 +136,7 @@ if __name__ == '__main__':
         except DecodeError:
             return Response("Bad request token", status=400)
         decoded['id'].append(childID)
-        new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256')
+        new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256').decode('ascii')
 
         if 'expiredTime' in body:
             db_name = 'access'
@@ -154,14 +150,13 @@ if __name__ == '__main__':
                     'expiration': body['expiredTime']
                 })
             else:
-                collection.insert_one(
-                    {'token': new_encoded,
-                    'expiration': body['expiredTime']}
-                )
+                collection.insert_one({
+                    'token': new_encoded,
+                    'expiration': body['expiredTime']
+                })
             client.close()
 
         return new_encoded
-
 
     @app.route('/operate', methods=['POST'])
     def operate():
@@ -210,6 +205,5 @@ if __name__ == '__main__':
 
         response = response.json()
         return json.dumps(response)
-
 
     app.run(host='0.0.0.0', port=4999)
