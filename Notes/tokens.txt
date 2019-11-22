@@ -7,3 +7,14 @@ b'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ6Il0sInBlcm1pc3Npb24iOnsicmVzb
 {'id': ['x'], 'permission': {'resource': 'register', 'params': {}}}
 {'id': ['y'], 'permission': {'resource': 'searchByLocType', 'params': {'loc': 'columbia', 'type': 'tv'}}}
 {'id': ['z'], 'permission': {'resource': 'delete', 'params': {'targetLoc': 'columbia', 'id': '*'}}}
+
+
+
+// instruction for delegate
+curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4Il0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJyZWdpc3RlciIsInBhcmFtcyI6e319fQ.YS1bixkoQ2DbUA6kDoN3dAmz3M_S3tc2R8P-gjiAdvM","childID":"y"}' -H "Content-Type: application/json" -X POST http://localhost:4999/delegate
+
+new token x assigned to y
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ4IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.lQeI8XHTKa6UDQ8B6WVF9Vtbx-EkEFzSi0tX9xGxV9U
+
+y register
+curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJ5IiwieSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoQnlMb2NUeXBlIiwicGFyYW1zIjp7ImxvYyI6ImNvbHVtYmlhIiwidHlwZSI6InR2In19fQ.G_WrUrE13CtXYMLXyh6a_NydswMDRV2AomEzL833B0U","operation":{"resource":"register","method":"POST","params":{},"data":{"td":{"_type":"tv","id":"y_tv"},"targetLoc":"columbia"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate

@@ -140,30 +140,28 @@ if __name__ == '__main__':
         except DecodeError:
             return Response("Bad request token", status=400)
         decoded['id'].append(childID)
-        new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256')
+        new_encoded = jwt.encode( , SECRET, algorithm='HS256')
 
         if 'expiredTime' in body:
-            absolute_time = time.time() + body['expiredTime']
             db_name = 'access'
             client = MongoClient('localhost', 27017)
             db = client[db_name]
             collection = db['token_to_expiration']
 
             if collection.find_one({'token': token}) is not None:
-                collection.update(
-                    {'token': token},
-                    {'token': token,
-                    'expiration': absolute_time}
-                )
+                collection.update({'token': token}, {
+                    'token': token,
+                    'expiration': body['expiredTime']
+                })
             else:
                 collection.insert_one(
                     {'token': token,
-                    'expiration': absolute_time}
+                    'expiration': body['expiredTime']}
                 )
-            client.close()      
+            client.close()
 
         return new_encoded
-        
+
 
     @app.route('/operate', methods=['POST'])
     def operate():
