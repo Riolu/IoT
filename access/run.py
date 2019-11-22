@@ -140,7 +140,7 @@ if __name__ == '__main__':
         except DecodeError:
             return Response("Bad request token", status=400)
         decoded['id'].append(childID)
-        new_encoded = jwt.encode( , SECRET, algorithm='HS256')
+        new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256')
 
         if 'expiredTime' in body:
             db_name = 'access'
