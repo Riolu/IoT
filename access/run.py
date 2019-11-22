@@ -148,14 +148,14 @@ if __name__ == '__main__':
             db = client[db_name]
             collection = db['token_to_expiration']
 
-            if collection.find_one({'token': token}) is not None:
-                collection.update({'token': token}, {
-                    'token': token,
+            if collection.find_one({'token': new_encoded}) is not None:
+                collection.update({'token': new_encoded}, {
+                    'token': new_encoded,
                     'expiration': body['expiredTime']
                 })
             else:
                 collection.insert_one(
-                    {'token': token,
+                    {'token': new_encoded,
                     'expiration': body['expiredTime']}
                 )
             client.close()
