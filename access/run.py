@@ -7,7 +7,7 @@ import jwt
 import requests
 import datetime
 import time
-import jwt.exceptions.DecodeError
+from jwt.exceptions import DecodeError
 
 
 
@@ -137,7 +137,7 @@ if __name__ == '__main__':
 
         try:
             decoded = jwt.decode(token, SECRET, algorithm='HS256')
-        except jwt.exceptions.DecodeError:
+        except DecodeError:
             return Response("Bad request token", status=400)
         decoded['id'].append(childID)
         new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256')
@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
         try:
             verifyResult = verify(token, SECRET, operation)
-        except jwt.exceptions.DecodeError:
+        except DecodeError:
             return Response("Bad request token", status=400)
         if token != "admin" and not verifyResult:
             return Response("Access Denied", status=403)
