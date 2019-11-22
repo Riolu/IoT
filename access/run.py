@@ -6,7 +6,9 @@ from pymongo import MongoClient
 import jwt
 import requests
 import datetime
-import time;
+import time
+import jwt.exceptions.DecodeError
+
 
 
 '''
@@ -43,6 +45,16 @@ def isSatisfiable(operation_permission, decoded_permission):
             return False
     return True
 
+def isStaleToken(token):
+    db_name = 'access'
+    client = MongoClient('localhost', 27017)
+    db = client[db_name]
+    collection = db['token_to_expiration']
+
+    token_expiration = collection.find_one({'token': token})
+    client.close()
+    return token_expiration is not None and token_expiration['expiration'] < time.time()
+
 def verify(token, secret, operation):
     decoded = jwt.decode(token, secret, algorithm='HS256')
     decoded_permission = decoded['permission']
@@ -50,17 +62,8 @@ def verify(token, secret, operation):
         key: operation[key]
         for key in ['resource', 'params']
     }
-
-    db_name = 'access'
-    client = MongoClient('localhost', 27017)
-    db = client[db_name]
-    collection = db['token_to_expiration']
-    
-    token_expiration = collection.find_one({'token': token})
-    client.close()
-    if token_expiration is not None and token_expiration['expiration'] < time.time():
-        return False 
-
+    if isStaleToken(token):
+        return False
     return isSatisfiable(operation_permission, decoded_permission)
 
 
@@ -92,7 +95,7 @@ if __name__ == '__main__':
 
         return _requestToken(SECRET, permission, _id)
 
-    
+
     @app.route('/revoke', methods=['POST'])
     def revoke():
         body = request.get_json()
@@ -100,28 +103,67 @@ if __name__ == '__main__':
             token = body['token']
         except KeyError:
             return Response("Bad request data", status=400)
-        
+
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
         collection = db['token_to_expiration']
-        
+
         if collection.find_one({'token': token}) is not None:
             collection.update(
-                {'token': token}, 
+                {'token': token},
                 {'token': token,
                 'expiration': time.time()}
             )
         else:
             collection.insert_one(
-                {'token': token, 
+                {'token': token,
                 'expiration': time.time()}
             )
         client.close()
         return {}
 
-    # @app.route('/delegate')
+    @app.route('/delegate', methods=['POST'])
+    def delegate():
+        body = request.get_json()
+        try:
+            token = body['token']
+            childID = body['childID']
+        except KeyError:
+            return Response("Bad request data", status=400)
 
+        if isStaleToken(token):
+            return Response("Token Expired", status=403)
+
+        try:
+            decoded = jwt.decode(token, SECRET, algorithm='HS256')
+        except jwt.exceptions.DecodeError:
+            return Response("Bad request token", status=400)
+        decoded['id'].append(childID)
+        new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256')
+
+        if 'expiredTime' in body:
+            absolute_time = time.time() + body['expiredTime']
+            db_name = 'access'
+            client = MongoClient('localhost', 27017)
+            db = client[db_name]
+            collection = db['token_to_expiration']
+
+            if collection.find_one({'token': token}) is not None:
+                collection.update(
+                    {'token': token},
+                    {'token': token,
+                    'expiration': absolute_time}
+                )
+            else:
+                collection.insert_one(
+                    {'token': token,
+                    'expiration': absolute_time}
+                )
+            client.close()      
+
+        return new_encoded
+        
 
     @app.route('/operate', methods=['POST'])
     def operate():
@@ -132,7 +174,11 @@ if __name__ == '__main__':
         except KeyError:
             return Response("Bad request data", status=400)
 
-        if token != "admin" and not verify(token, SECRET, operation):
+        try:
+            verifyResult = verify(token, SECRET, operation)
+        except jwt.exceptions.DecodeError:
+            return Response("Bad request token", status=400)
+        if token != "admin" and not verifyResult:
             return Response("Access Denied", status=403)
 
         operation_url = MASTER_URL + operation['resource']
