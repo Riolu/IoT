@@ -148,7 +148,13 @@ if __name__ == '__main__':
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
 
-        return _requestToken(SECRET, permission, [userId])
+        token = _requestToken(SECRET, permission, [userId])
+        collection = db['token_to_expiration']
+        if collection.find_one({'token': token}) is not None:
+            collection.delete_one({'token': token})
+        client.close()
+
+        return token
 
     @app.route('/revoke', methods=['POST'])
     def revoke():
