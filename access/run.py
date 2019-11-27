@@ -83,7 +83,7 @@ def verify(token, secret, operation):
 
 def _requestToken(secret, permission, _id):
     encoded = jwt.encode({
-        'id': _id,
+        'id': [_id],
         'permission': permission
     },
                          secret,
