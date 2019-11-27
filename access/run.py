@@ -8,6 +8,11 @@ import requests
 import datetime
 import time
 from jwt.exceptions import DecodeError
+from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA
+from Crypto.Signature import PKCS1_v1_5
+from base64 import b64encode, b64decode
+
 '''
 type = tv
 check all match
@@ -31,6 +36,14 @@ operation = {
     'data': {}
 }
 '''
+
+def rsa_verify(signature, _id, publicKey):
+    sign = b64decode(signature)
+    h = SHA.new(_id.encode('utf-8'))
+    # keyDER = b64decode(privateKey)
+    keyPub = RSA.importKey(publicKey)
+    verifier = PKCS1_v1_5.new(keyPub)
+    return verifier.verify(h, sign)
 
 
 def isSatisfiable(operation_permission, decoded_permission):
@@ -85,14 +98,54 @@ if __name__ == '__main__':
     SECRET = app.config['SECRET']
     MASTER_URL = app.config['MASTER_URL']
 
+    @app.route('/registerUserPublicKey', methods=['POST'])
+    def registerUserPublicKey():
+        body = request.get_json()
+        try:
+            publicKey = body['publicKey']
+            _id = body['id']
+            password = body['password']
+        except KeyError:
+            return Response("Bad request data", status=400)
+
+        db_name = 'access'
+        client = MongoClient('localhost', 27017)
+        db = client[db_name]
+        user_to_password_collection = db['user_to_password']
+        password_item = user_to_password_collection.find_one({'id': _id})
+        if password_item is None or password_item['password'] != password:
+            return Response("Authentication error", status=403)
+
+        collection = db['user_to_publicKey']
+
+        if collection.find_one({'id': _id}) is not None:
+            collection.update({'id': _id}, {
+                'id': _id,
+                'publicKey': publicKey
+            })
+        else:
+            collection.insert_one({'id': _id, 'publicKey': publicKey})
+        client.close()
+
+        return {}
+
     @app.route('/request', methods=['POST'])
     def requestToken():
         body = request.get_json()
         try:
             _id = body['id']
+            password = body['password']
             permission = body['permission']
         except KeyError:
             return Response("Bad request data", status=400)
+
+        db_name = 'access'
+        client = MongoClient('localhost', 27017)
+        db = client[db_name]
+        user_to_password_collection = db['user_to_password']
+        password_item = user_to_password_collection.find_one({'id': _id})
+        if password_item is None or password_item['password'] != password:
+            return Response("Authentication error", status=403)
 
         return _requestToken(SECRET, permission, _id)
 
@@ -100,9 +153,25 @@ if __name__ == '__main__':
     def revoke():
         body = request.get_json()
         try:
+            _id = body['id']
             token = body['token']
+            signature = body['signature']
         except KeyError:
             return Response("Bad request data", status=400)
+
+        # from database get corresponding public key
+        db_name = 'access'
+        client = MongoClient('localhost', 27017)
+        db = client[db_name]
+        collection = db['user_to_publicKey']
+        pubkey_item = collection.find_one({'id': _id})
+        if pubkey_item is None:
+            return Response("User not registered", status=403)
+        
+        publicKey = pubkey_item['publicKey']
+        if not rsa_verify(signature, _id, publicKey):
+            return Response("Authentication error", status=403)
+
 
         db_name = 'access'
         client = MongoClient('localhost', 27017)
