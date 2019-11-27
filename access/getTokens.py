@@ -6,13 +6,13 @@ def main():
     SECRET = Config.SECRET
 
     data = [{
-        'id': ['x'],
+        'id': ['a'],
         'permission': {
             'resource': 'register',
             'params': {}
         }
     }, {
-        'id': ['y'],
+        'id': ['a'],
         'permission': {
             'resource': 'searchByLocType',
             'params': {
@@ -21,7 +21,7 @@ def main():
             }
         }
     }, {
-        'id': ['z'],
+        'id': ['a'],
         'permission': {
             'resource': 'delete',
             'params': {
@@ -44,3 +44,31 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+#   data = [{
+#         'id': ['x'],
+#         'permission': {
+#             'resource': 'register',
+#             'params': {}
+#         }
+#     }, {
+#         'id': ['y'],
+#         'permission': {
+#             'resource': 'searchByLocType',
+#             'params': {
+#                 'loc': 'columbia',
+#                 'type': 'tv'
+#             }
+#         }
+#     }, {
+#         'id': ['z'],
+#         'permission': {
+#             'resource': 'delete',
+#             'params': {
+#                 'targetLoc': 'columbia',
+#                 'id': '*'
+#             }
+#         }
+#     }]

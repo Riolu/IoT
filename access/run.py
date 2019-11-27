@@ -133,8 +133,9 @@ if __name__ == '__main__':
     def requestToken():
         body = request.get_json()
         try:
-            _id = body['id']
+            adminId = body['adminId']
             password = body['password']
+            userId = body['userId']
             permission = body['permission']
         except KeyError:
             return Response("Bad request data", status=400)
@@ -142,12 +143,12 @@ if __name__ == '__main__':
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
-        id_to_password_collection = db['id_to_password']
-        password_item = id_to_password_collection.find_one({'id': _id})
+        admin_to_password_collection = db['admin_to_password']
+        password_item = admin_to_password_collection.find_one({'id': adminId})
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
 
-        return _requestToken(SECRET, permission, _id)
+        return _requestToken(SECRET, permission, userId)
 
     @app.route('/revoke', methods=['POST'])
     def revoke():

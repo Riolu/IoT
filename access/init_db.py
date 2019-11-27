@@ -15,8 +15,14 @@ if __name__ == '__main__':
     }, {
         'id': 'b',
         'password': 'bbb'
-    }
-    ])
+    }])
+
+    collection_admin_to_password = db['admin_to_password']
+    collection_admin_to_password.delete_many({})
+    collection_admin_to_password.insert_many([{
+        'id': 'admin',
+        'password': 'admin'
+    }])
 
     collection_id_to_publicKey = db['id_to_publicKey']
     collection_id_to_publicKey.delete_many({})
