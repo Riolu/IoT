@@ -83,7 +83,7 @@ def verify(token, secret, operation):
 
 def _requestToken(secret, permission, _id):
     encoded = jwt.encode({
-        'id': [_id],
+        'id': _id,
         'permission': permission
     },
                          secret,
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
 
-        return _requestToken(SECRET, permission, userId)
+        return _requestToken(SECRET, permission, [userId])
 
     @app.route('/revoke', methods=['POST'])
     def revoke():
