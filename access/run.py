@@ -111,21 +111,20 @@ if __name__ == '__main__':
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
-        user_to_password_collection = db['id_to_password']
-        password_item = user_to_password_collection.find_one({'id': _id})
-        print(password_item)
+        id_to_password_collection = db['id_to_password']
+        password_item = id_to_password_collection.find_one({'id': _id})
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
 
-        collection = db['id_to_password']
+        id_to_publicKey_collection = db['id_to_publicKey']
 
-        if collection.find_one({'id': _id}) is not None:
-            collection.update({'id': _id}, {
+        if id_to_publicKey_collection.find_one({'id': _id}) is not None:
+            id_to_publicKey_collection.update({'id': _id}, {
                 'id': _id,
                 'publicKey': publicKey
             })
         else:
-            collection.insert_one({'id': _id, 'publicKey': publicKey})
+            id_to_publicKey_collection.insert_one({'id': _id, 'publicKey': publicKey})
         client.close()
 
         return {}
