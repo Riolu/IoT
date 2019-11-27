@@ -142,8 +142,8 @@ if __name__ == '__main__':
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
-        user_to_password_collection = db['id_to_password']
-        password_item = user_to_password_collection.find_one({'id': _id})
+        id_to_password_collection = db['id_to_password']
+        password_item = id_to_password_collection.find_one({'id': _id})
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
 
@@ -172,7 +172,6 @@ if __name__ == '__main__':
         if not rsa_verify(signature, _id, publicKey):
             return Response("Authentication error", status=403)
 
-
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
@@ -188,18 +187,34 @@ if __name__ == '__main__':
         client.close()
         return {}
 
+
     @app.route('/delegate', methods=['POST'])
     def delegate():
         body = request.get_json()
         try:
             token = body['token']
             childID = body['childID']
+            _id = body['id']
+            signature = body['signature']
         except KeyError:
             return Response("Bad request data", status=400)
 
+        # from database get corresponding public key
+        db_name = 'access'
+        client = MongoClient('localhost', 27017)
+        db = client[db_name]
+        collection = db['id_to_publicKey']
+        pubkey_item = collection.find_one({'id': _id})
+        if pubkey_item is None:
+            return Response("User not registered", status=403)
+        
+        publicKey = pubkey_item['publicKey']
+        if not rsa_verify(signature, _id, publicKey):
+            return Response("Authentication error", status=403)
+
         if isStaleToken(token):
             return Response("Token Expired", status=403)
-
+        
         try:
             decoded = jwt.decode(token, SECRET, algorithm='HS256')
         except DecodeError:
@@ -233,9 +248,24 @@ if __name__ == '__main__':
         try:
             operation = body['operation']
             token = body['token']
+            _id = body['id']
+            signature = body['signature']
         except KeyError:
             return Response("Bad request data", status=400)
 
+        # from database get corresponding public key
+        db_name = 'access'
+        client = MongoClient('localhost', 27017)
+        db = client[db_name]
+        collection = db['id_to_publicKey']
+        pubkey_item = collection.find_one({'id': _id})
+        if pubkey_item is None:
+            return Response("User not registered", status=403)
+        
+        publicKey = pubkey_item['publicKey']
+        if not rsa_verify(signature, _id, publicKey):
+            return Response("Authentication error", status=403)
+        
         try:
             verifyResult = verify(token, SECRET, operation)
         except DecodeError:
