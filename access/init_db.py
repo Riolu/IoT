@@ -11,8 +11,12 @@ if __name__ == '__main__':
     collection_id_to_password.delete_many({})
     collection_id_to_password.insert_many([{
         'id': 'a',
-        'password': 'Xksnfodaso'
-    }])
+        'password': 'ppp'
+    }, {
+        'id': 'b',
+        'password': 'bbb'
+    }
+    ])
 
     collection_id_to_publicKey = db['id_to_publicKey']
     collection_id_to_publicKey.delete_many({})
