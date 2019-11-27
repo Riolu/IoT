@@ -143,7 +143,7 @@ if __name__ == '__main__':
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
-        user_to_password_collection = db['user_to_password']
+        user_to_password_collection = db['id_to_password']
         password_item = user_to_password_collection.find_one({'id': _id})
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
@@ -164,7 +164,7 @@ if __name__ == '__main__':
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
-        collection = db['user_to_publicKey']
+        collection = db['id_to_publicKey']
         pubkey_item = collection.find_one({'id': _id})
         if pubkey_item is None:
             return Response("User not registered", status=403)
