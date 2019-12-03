@@ -4,7 +4,7 @@ if __name__ == '__main__':
     DB_NAME = "new_york"
     URLS = [
         {"loc": "master", "url": "http://192.168.1.189:5000/"},
-        {"loc": "parent", "url": "http://192.168.1.156:5000"},
+        {"loc": "parent", "url": "http://192.168.1.156:5000/"},
         {"loc": "manhattan", "url": "http://192.168.1.156:5001/"},
         {"loc": "self", "url": "new_york"}
     ]
