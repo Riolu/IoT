@@ -1,16 +1,13 @@
 cd ../../
-python -m IoT.UnitedStates.init_db --drop
-python -m IoT.NewYork.init_db --drop
-python -m IoT.Columbia.init_db --drop
-python -m IoT.MTA.init_db --drop
+python -m IoT.level1.init_db --drop
+python -m IoT.level3.init_db --drop
+python -m IoT.level5.init_db --drop
 
-python -m IoT.UnitedStates.run &
+python -m IoT.level1.run &
 echo $!
-python -m IoT.NewYork.run &
+python -m IoT.level3.run &
 echo $!
-python -m IoT.Columbia.run &
-echo $!
-python -m IoT.MTA.run &
+python -m IoT.level5.run &
 echo $!
 
 echo $$
