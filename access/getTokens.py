@@ -16,8 +16,35 @@ def main():
         'permission': {
             'resource': 'searchByLocType',
             'params': {
-                'loc': 'columbia',
-                'type': 'tv'
+                'loc': '*',
+                'type': '*'
+            }
+        }
+    }, {
+        'id': ['a'],
+        'permission': {
+            'resource': 'searchByLocTypeIterative',
+            'params': {
+                'loc': '*',
+                'type': '*'
+            }
+        }
+    }, {
+        'id': ['a'],
+        'permission': {
+            'resource': 'searchPublic',
+            'params': {
+                'loc': '*'
+            }
+        }
+    }, {
+        'id': ['a'],
+        'permission': {
+            'resource': 'relocate',
+            'params': {
+                'fromLoc': '*',
+                'toLoc': '*',
+                'id': '*'
             }
         }
     }, {
@@ -25,7 +52,7 @@ def main():
         'permission': {
             'resource': 'delete',
             'params': {
-                'targetLoc': 'columbia',
+                'targetLoc': '*',
                 'id': '*'
             }
         }
