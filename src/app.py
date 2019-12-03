@@ -63,7 +63,7 @@ def getApp(dbname):
                 'type': td['_type'],
                 'childLoc': targetLoc
             }
-            r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers)
+            r = requests.put(child_url+'registerInfo', data=json.dumps(info_data), headers=headers, timeout=None)
             if not re.match(r'2..', str(r.status_code)):
                 return r
 
@@ -71,7 +71,7 @@ def getApp(dbname):
                 'td': td
             }
             if td['publicity'] > 0:
-                r = requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers)
+                r = requests.post(host_url + 'pushUp', data=json.dumps(public_data), headers=headers, timeout=None)
                 if not re.match(r'2..', str(r.status_code)):
                     return r
 
@@ -80,7 +80,7 @@ def getApp(dbname):
             child_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             url = child_url + 'register'
             data = request.data
-            r = requests.post(url, data=data, headers=headers)
+            r = requests.post(url, data=data, headers=headers, timeout=None)
             if not re.match(r'2..', str(r.status_code)):
                 return r
         else:
@@ -90,7 +90,7 @@ def getApp(dbname):
                 return {}
             url = master_url + 'register'
             data = request.data
-            r = requests.post(url, data=data, headers=headers)
+            r = requests.post(url, data=data, headers=headers, timeout=None)
             if not re.match(r'2..', str(r.status_code)):
                 return r
         
@@ -203,7 +203,7 @@ def getApp(dbname):
             new_data = request.get_json()
             self_loc = getSelfName(request.host_url)
             new_data['childLoc'] = self_loc
-            r = requests.put(parent_url + 'registerInfo', data=json.dumps(new_data), headers=headers)
+            r = requests.put(parent_url + 'registerInfo', data=json.dumps(new_data), headers=headers, timeout=None)
             if not re.match(r'2..', str(r.status_code)):
                 return r
         
