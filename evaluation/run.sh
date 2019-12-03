@@ -8,6 +8,7 @@ for ((i=1;i<=itrs;i++)); do
     echo "$JSON"
     cmd=\''curl http://192.168.1.189:5000/register -X POST -d '"$JSON"' -H "Content-Type:application/json"'\'
     echo "$cmd"
+    eval $cmd
     # td=\''{"_type": "pc", "id": "'"$i"'"}'\'
     # JSON=\''{"targetLoc": "level5", "td": "'"$td"'"}'\'
     # echo "$JSON"
