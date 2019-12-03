@@ -5,7 +5,7 @@ if __name__ == '__main__':
     URLS = [
         {"loc": "master", "url": "http://192.168.1.189:5000/"},
         {"loc": "parent", "url": ""},
-        {"loc": "new_york_state", "url": "http://192.168.1.156:5000/"},
+        {"loc": "new_york_state", "url": "http://192.168.1.156:5001/"},
         {"loc": "self", "url": "united_states"}
     ]
     CHILD_LOCS = [
