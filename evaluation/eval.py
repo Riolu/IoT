@@ -94,3 +94,5 @@ if __name__ == '__main__':
         print(sep)
         evaluate_searchByLocTypeIterative(num_itrs)
         print(sep)
+        evaluate_delete(num_itrs)
+        print(sep)
