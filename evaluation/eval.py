@@ -27,21 +27,6 @@ def evaluate_register(itrs):
     print("Average time: {}".format(float(elapsed) / itrs))
 
 
-def evaluate_searchByLocType(itrs):
-    url = 'http://192.168.1.189:5000/searchByLocType?loc={}&type={}'.format(
-        'level5', 'pc')
-
-    start = time.time()
-    for _ in tqdm(range(itrs)):
-        requests.get(url)
-
-    end = time.time()
-    elapsed = end - start
-    print("Total of {} seconds elapsed for searchByLocType {} things".format(
-        elapsed, itrs))
-    print("Average time: {}".format(float(elapsed) / itrs))
-
-
 def evaluate_searchByLocId(itrs):
     url = 'http://192.168.1.189:5000/searchByLocId?loc={}&id={}'
 
@@ -55,9 +40,57 @@ def evaluate_searchByLocId(itrs):
         elapsed, itrs))
     print("Average time: {}".format(float(elapsed) / itrs))
 
+
+def evaluate_searchByLocTypeRecursive(itrs):
+    url = 'http://192.168.1.189:5000/searchByLocType?loc={}&type={}'.format(
+        'level5', 'pc')
+
+    start = time.time()
+    for _ in tqdm(range(itrs)):
+        requests.get(url)
+
+    end = time.time()
+    elapsed = end - start
+    print("Total of {} seconds elapsed for searchByLocTypeRecursive {} things".format(
+        elapsed, itrs))
+    print("Average time: {}".format(float(elapsed) / itrs))
+
+
+def evaluate_searchByLocTypeIterative(itrs):
+    url = 'http://192.168.1.189:5000/searchByLocTypeIterative?loc={}&type={}'.format(
+        'level5', 'pc')
+
+    start = time.time()
+    for _ in tqdm(range(itrs)):
+        requests.get(url)
+
+    end = time.time()
+    elapsed = end - start
+    print("Total of {} seconds elapsed for searchByLocTypeIterative {} things".format(
+        elapsed, itrs))
+    print("Average time: {}".format(float(elapsed) / itrs))
+
+
+def evaluate_delete(irts):
+    url = "http://192.168.1.189:5000/delete?targetLoc={}&id={}'
+    start = time.time()
+    for _ in tqdm(range(itrs)):
+        requests.delete(url.format('level5', 'urn:dev:ops:54312-pc-{}'.format(i)))
+    end = time.time()
+    elapsed = end - start
+    print("Total of {} seconds elapsed for delete {} things".format(
+        elapsed, itrs))
+    print("Average time: {}".format(float(elapsed) / itrs))
+
+
 if __name__ == '__main__':
-    evaluate_register(100)
-    print("\n")
-    evaluate_searchByLocType(100)
-    print("\n")
-    evaluate_searchByLocId(100)
+    sep = '-'*50
+    for num_itrs in [10, 100, 1000]:
+        evaluate_register(num_itrs)
+        print(sep)
+        evaluate_searchByLocId(num_itrs)
+        print(sep)
+        evaluate_searchByLocTypeRecursive(num_itrs)
+        print(sep)
+        evaluate_searchByLocTypeIterative(num_itrs)
+        print(sep)
