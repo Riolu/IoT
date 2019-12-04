@@ -51,8 +51,8 @@ def evaluate_searchByLocTypeRecursive(itrs):
 
     end = time.time()
     elapsed = end - start
-    print("Total of {} seconds elapsed for searchByLocTypeRecursive {} things".format(
-        elapsed, itrs))
+    print("Total of {} seconds elapsed for searchByLocTypeRecursive {} things".
+          format(elapsed, itrs))
     print("Average time: {}".format(float(elapsed) / itrs))
 
 
@@ -66,8 +66,8 @@ def evaluate_searchByLocTypeIterative(itrs):
 
     end = time.time()
     elapsed = end - start
-    print("Total of {} seconds elapsed for searchByLocTypeIterative {} things".format(
-        elapsed, itrs))
+    print("Total of {} seconds elapsed for searchByLocTypeIterative {} things".
+          format(elapsed, itrs))
     print("Average time: {}".format(float(elapsed) / itrs))
 
 
@@ -75,7 +75,8 @@ def evaluate_delete(itrs):
     url = "http://192.168.1.189:5000/delete?targetLoc={}&id={}"
     start = time.time()
     for i in tqdm(range(itrs)):
-        requests.delete(url.format('level5', 'urn:dev:ops:54312-pc-{}'.format(i)))
+        requests.delete(
+            url.format('level5', 'urn:dev:ops:54312-pc-{}'.format(i)))
     end = time.time()
     elapsed = end - start
     print("Total of {} seconds elapsed for delete {} things".format(
@@ -84,15 +85,16 @@ def evaluate_delete(itrs):
 
 
 if __name__ == '__main__':
-    sep = '-'*50
-    for num_itrs in [10, 100, 1000]:
-        evaluate_register(num_itrs)
-        print(sep)
-        evaluate_searchByLocId(num_itrs)
-        print(sep)
-        evaluate_searchByLocTypeRecursive(num_itrs)
-        print(sep)
-        evaluate_searchByLocTypeIterative(num_itrs)
-        print(sep)
-        evaluate_delete(num_itrs)
-        print(sep)
+    # warmup
+    evaluate_register(1)
+
+    sep = '-' * 50
+    evaluation_ls = [
+        evaluate_register, evaluate_searchByLocId,
+        evaluate_searchByLocTypeRecursive, evaluate_searchByLocTypeIterative,
+        evaluate_delete
+    ]
+    for num_itrs in [10, 50, 100, 200, 500]:
+        for evaluation in evaluation_ls:
+            evaluation(num_itrs)
+            print(sep)
