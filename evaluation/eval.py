@@ -71,10 +71,10 @@ def evaluate_searchByLocTypeIterative(itrs):
     print("Average time: {}".format(float(elapsed) / itrs))
 
 
-def evaluate_delete(irts):
+def evaluate_delete(itrs):
     url = "http://192.168.1.189:5000/delete?targetLoc={}&id={}"
     start = time.time()
-    for _ in tqdm(range(itrs)):
+    for i in tqdm(range(itrs)):
         requests.delete(url.format('level5', 'urn:dev:ops:54312-pc-{}'.format(i)))
     end = time.time()
     elapsed = end - start
