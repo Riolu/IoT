@@ -86,7 +86,7 @@ def evaluate_delete(itrs):
 
 if __name__ == '__main__':
     # warmup
-    evaluate_register(1)
+    evaluate_register(50)
 
     sep = '-' * 50
     evaluation_ls = [
