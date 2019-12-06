@@ -114,6 +114,8 @@ if __name__ == '__main__':
             res[str(num_itrs)].append(evaluation(num_itrs))
             print(sep)
 
+    print(res)
+
 
 '''
 0.21520845890045165     0.21815636157989501     0.2169780945777893      0.21891479611396789
