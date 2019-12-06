@@ -22,9 +22,12 @@ def evaluate_register(itrs):
 
     end = time.time()
     elapsed = end - start
+    avg = float(elapsed) / itrs
     print("Total of {} seconds elapsed for register {} things".format(
         elapsed, itrs))
-    print("Average time: {}".format(float(elapsed) / itrs))
+    print("Average time: {}".format(avg))
+
+    return (elapsed, avg)
 
 
 def evaluate_searchByLocId(itrs):
@@ -36,9 +39,11 @@ def evaluate_searchByLocId(itrs):
 
     end = time.time()
     elapsed = end - start
+    avg = float(elapsed) / itrs
     print("Total of {} seconds elapsed for searchByLocId {} things".format(
         elapsed, itrs))
-    print("Average time: {}".format(float(elapsed) / itrs))
+    print("Average time: {}".format(avg))
+    return (elapsed, avg)
 
 
 def evaluate_searchByLocTypeRecursive(itrs):
@@ -51,9 +56,11 @@ def evaluate_searchByLocTypeRecursive(itrs):
 
     end = time.time()
     elapsed = end - start
+    avg = float(elapsed) / itrs
     print("Total of {} seconds elapsed for searchByLocTypeRecursive {} things".
           format(elapsed, itrs))
-    print("Average time: {}".format(float(elapsed) / itrs))
+    print("Average time: {}".format(avg))
+    return (elapsed, avg)
 
 
 def evaluate_searchByLocTypeIterative(itrs):
@@ -66,9 +73,11 @@ def evaluate_searchByLocTypeIterative(itrs):
 
     end = time.time()
     elapsed = end - start
+    avg = float(elapsed) / itrs
     print("Total of {} seconds elapsed for searchByLocTypeIterative {} things".
           format(elapsed, itrs))
-    print("Average time: {}".format(float(elapsed) / itrs))
+    print("Average time: {}".format(avg))
+    return (elapsed, avg)
 
 
 def evaluate_delete(itrs):
@@ -79,9 +88,11 @@ def evaluate_delete(itrs):
             url.format('level5', 'urn:dev:ops:54312-pc-{}'.format(i)))
     end = time.time()
     elapsed = end - start
+    avg = float(elapsed) / itrs
     print("Total of {} seconds elapsed for delete {} things".format(
         elapsed, itrs))
-    print("Average time: {}".format(float(elapsed) / itrs))
+    print("Average time: {}".format(avg))
+    return (elapsed, avg)
 
 
 if __name__ == '__main__':
@@ -94,7 +105,22 @@ if __name__ == '__main__':
         evaluate_searchByLocTypeRecursive, evaluate_searchByLocTypeIterative,
         evaluate_delete
     ]
+
+    res = {}
+
     for num_itrs in [10, 50, 100, 200, 500]:
+        res[str(num_itrs)] = []
         for evaluation in evaluation_ls:
-            evaluation(num_itrs)
+            res[str(num_itrs)].append(evaluation(num_itrs))
             print(sep)
+
+
+'''
+0.21520845890045165     0.21815636157989501     0.2169780945777893      0.21891479611396789
+0.18715918064117432     0.1796647548675537      0.177275710105896       0.17775959014892578
+0.23601322174072265     0.2353415822982788      0.23670841217041017     0.2382632851600647
+0.03278398513793945     0.03250162124633789     0.033439044952392576    0.033434526920318605
+0.24893612861633302     0.26120203018188476     0.2650839018821716      0.26385631918907165
+
+
+'''

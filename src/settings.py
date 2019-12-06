@@ -60,7 +60,9 @@ td = {
             'type': 'string'
         },
         'id': {
-            'type': 'string'
+            'type': 'string',
+            'required': True,
+            'unique': True
         },
         'publicity': {
             'type': 'integer'

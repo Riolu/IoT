@@ -515,9 +515,9 @@ def getApp(dbname):
                 return response
             response = response.json()['_items']
         else:
-            target_url = retrieve(loc, 'url', host_url, 'loc_to_url')
+            target_url = retrieve(target_loc, 'url', host_url, 'loc_to_url')
             if target_url is None:
-                child_loc = retrieve(loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
+                child_loc = retrieve(target_loc, 'childLoc', host_url, 'targetLoc_to_childLoc')
                 target_url = retrieve(child_loc, 'url', host_url, 'loc_to_url')
             response = {'url': target_url}
         
