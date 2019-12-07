@@ -19,11 +19,11 @@ def generate_RSA(bits=2048):
 
 
 def main():
-    for _ in range(10):
+    for _ in range(5):
         private_key, public_key = generate_RSA()
-        print(b64decode(private_key))
-        print(b64decode(public_key))
-        print('-' * 20)
+        print(private_key)
+        print(public_key)
+        print('\n')
 
 
 if __name__ == '__main__':

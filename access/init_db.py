@@ -10,10 +10,10 @@ if __name__ == '__main__':
     collection_id_to_password = db['id_to_password']
     collection_id_to_password.delete_many({})
     collection_id_to_password.insert_many([{
-        'id': 'a',
+        'id': 'alita',
         'password': 'ppp'
     }, {
-        'id': 'b',
+        'id': 'brian',
         'password': 'bbb'
     }])
 
