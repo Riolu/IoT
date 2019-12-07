@@ -1,1 +1,61 @@
-# 1. 
+    0(1) 
+    |
+    1(2)
+    | 
+    0(3)
+  /   \
+1(4)   1(4b)
+|      |
+0(5)   0(5b)
+
+0: auc6
+1: auc7
+
+
+// alita registers a tv at level5
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.IwRe3PNlguXG9WraPJoW9pzOrxeuAhrcJUF7RgSBX3Q", "id": "alita", "signature": "xxx", "operation": {"resource": "register", "method": "POST","params": {}, "data": {"td": {"_type": "tv", "id": "urn:dev:ops:23112-tv-1", "publicity": 1}, "targetLoc": "level5"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita registers a pc at level5
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVnaXN0ZXIiLCJwYXJhbXMiOnt9fX0.IwRe3PNlguXG9WraPJoW9pzOrxeuAhrcJUF7RgSBX3Q", "id": "alita", "signature": "xxx", "operation": {"resource": "register", "method": "POST","params": {}, "data": {"td": {"_type": "pc", "id": "urn:dev:ops:23221-pc-10"}, "targetLoc": "level5"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita searchByLocType 
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoQnlMb2NUeXBlIiwicGFyYW1zIjp7ImxvYyI6IioiLCJ0eXBlIjoiKiJ9fX0.osbVry6je6fVbwivRGxoEbjvmBPXNe0mAVIY_a-SuNM", "id": "alita", "signature": "xxx", "operation": {"resource": "searchByLocType", "method": "GET", "params": {"type": "tv", "loc": "level5"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita searchPublic
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoUHVibGljIiwicGFyYW1zIjp7ImxvYyI6IioifX19.jbBcvuPqXT2knY9iSrOpH9dl0XMGwXM7pKpSOtPnbU4", "id": "alita", "signature": "xxx", "operation": {"resource": "searchPublic", "method": "GET", "params": {"loc": "level4"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita searchByLocId
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoQnlMb2NJZCIsInBhcmFtcyI6eyJsb2MiOiIqIiwiaWQiOiIqIn19fQ.XM-8f5RBBrlbi3-ILtrlhseTXCMrJNaI3rT_m6HO068", "id": "alita", "signature": "xxx", "operation": {"resource": "searchByLocId", "method": "GET", "params": {"loc": "level5", "id": "urn:dev:ops:23112-tv-1"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita relocate tv from level5 to level5b
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoicmVsb2NhdGUiLCJwYXJhbXMiOnsiZnJvbUxvYyI6IioiLCJ0b0xvYyI6IioifX19.Wqvbop7_-q4_TDEn8yLhxQqdy5RarpiXg610u3N22d0", "id": "alita", "signature": "xxx", "operation": {"resource": "relocate", "method": "PUT", "params": {"fromLoc": "level5", "toLoc": "level5b", "id": "urn:dev:ops:23112-tv-1"}, "data":{}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita searchPublic at level4, no tv anymore
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoUHVibGljIiwicGFyYW1zIjp7ImxvYyI6IioifX19.jbBcvuPqXT2knY9iSrOpH9dl0XMGwXM7pKpSOtPnbU4", "id": "alita", "signature": "xxx", "operation": {"resource": "searchPublic", "method": "GET", "params": {"loc": "level4"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita searchPublic at level4b, find the tv
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoUHVibGljIiwicGFyYW1zIjp7ImxvYyI6IioifX19.jbBcvuPqXT2knY9iSrOpH9dl0XMGwXM7pKpSOtPnbU4", "id": "alita", "signature": "xxx", "operation": {"resource": "searchPublic", "method": "GET", "params": {"loc": "level4b"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita delete tv from level5b
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoiZGVsZXRlIiwicGFyYW1zIjp7InRhcmdldExvYyI6IioiLCJpZCI6IioifX19._mdKwKECUwcojjbAVRhW4RbO9nB1F1H_mCIPNjLucKs", "id": "alita", "signature": "xxx", "operation": {"resource": "delete", "method": "DELETE", "params": {"targetLoc": "level5b", "id": "urn:dev:ops:23112-tv-1"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita searchPublic at level4b, should find nothing
+curl -d '{"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoUHVibGljIiwicGFyYW1zIjp7ImxvYyI6IioifX19.jbBcvuPqXT2knY9iSrOpH9dl0XMGwXM7pKpSOtPnbU4", "id": "alita", "signature": "xxx", "operation": {"resource": "searchPublic", "method": "GET", "params": {"loc": "level4b"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+
+
+
+
+
+
+// alita delegates her token for searchByLocType to brian
+curl -d '{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSJdLCJwZXJtaXNzaW9uIjp7InJlc291cmNlIjoic2VhcmNoQnlMb2NUeXBlIiwicGFyYW1zIjp7ImxvYyI6IioiLCJ0eXBlIjoiKiJ9fX0.osbVry6je6fVbwivRGxoEbjvmBPXNe0mAVIY_a-SuNM", "childID": "brian", "id": "alita", "signature": "?"}' -H "Content-Type: application/json" -X POST http://localhost:4999/delegate
+
+// brian uses the token delegated by alita to searchByLocType
+curl -d '{"token": "?", "id": "brian", "signature": "?", "operation": {"resource": "searchByLocType", "method": "GET", "params": {"type": "pc", "loc": "level5"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate
+
+// alita revokes brian's token
+curl -d '{"id": "alita", "token": "?", "signature": "?"}' -H "Content-Type: application/json" -X POST http://localhost:4999/revoke
+
+// brian attempts to use the revoked token delegated by alita to searchByLocType
+curl -d '{"token": "?", "id": "brian", "signature": "?", "operation": {"resource": "searchByLocType", "method": "GET", "params": {"type": "pc", "loc": "level5"}}}' -H "Content-Type: application/json" -X POST http://localhost:4999/operate

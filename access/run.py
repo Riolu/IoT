@@ -310,9 +310,9 @@ if __name__ == '__main__':
                                      headers=headers)
 
         elif operation['method'] == 'PUT':
-            response = requests.put(operation_url,
-                                    data=json.dumps(operation['data']),
-                                    headers=headers)
+            put_url = operation_url + '?' + '&'.join(
+                ['{}={}'.format(k, v) for k, v in operation['params'].items()])
+            response = requests.put(put_url)
 
         if not re.match(r'2..', str(response.status_code)):
             return response

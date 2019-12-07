@@ -44,7 +44,8 @@ def getTokens():
             'resource': 'relocate',
             'params': {
                 'fromLoc': '*',
-                'toLoc': '*'
+                'toLoc': '*',
+                'id': '*'
             }
         }
     }, {
@@ -68,8 +69,6 @@ def getTokens():
     for permissionRequest in permissionRequestList:
         print(permissionRequest['permission']['resource'])
         print(_requestToken(SECRET, permissionRequest['permission'], permissionRequest['id']))
-
-    # return tokens
 
 
 if __name__ == '__main__':

@@ -11,7 +11,9 @@ if __name__ == '__main__':
     CHILD_LOCS = [
         {"targetLoc": "level3", "childLoc": "level2"},
         {"targetLoc": "level4", "childLoc": "level2"},
-        {"targetLoc": "level5", "childLoc": "level2"}
+        {"targetLoc": "level4b", "childLoc": "level2"},
+        {"targetLoc": "level5", "childLoc": "level2"},
+        {"targetLoc": "level5b", "childLoc": "level2"}
     ]
 
     dbinit(DB_NAME, URLS, CHILD_LOCS)
