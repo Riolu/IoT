@@ -37,6 +37,7 @@ operation = {
 }
 '''
 
+# rsa verification
 def rsa_verify(signature, msg, publicKey):
     sign = b64decode(signature)
     h = SHA.new(msg.encode('utf-8'))
@@ -46,6 +47,7 @@ def rsa_verify(signature, msg, publicKey):
     return verifier.verify(h, sign)
 
 
+# check whether requested operation satisfies decoded permission from token
 def isSatisfiable(operation_permission, decoded_permission):
     if operation_permission['resource'] != decoded_permission['resource']:
         return False
@@ -57,6 +59,7 @@ def isSatisfiable(operation_permission, decoded_permission):
     return True
 
 
+# check whether the token has expired (is stale)
 def isStaleToken(token):
     db_name = 'access'
     client = MongoClient('localhost', 27017)
@@ -68,7 +71,7 @@ def isStaleToken(token):
     return token_expiration is not None and token_expiration[
         'expiration'] < time.time()
 
-
+# check whether the decoded token is consistent with the requested operation
 def verify(token, secret, operation):
     decoded = jwt.decode(token, secret, algorithm='HS256')
     decoded_permission = decoded['permission']
@@ -80,7 +83,7 @@ def verify(token, secret, operation):
         return False
     return isSatisfiable(operation_permission, decoded_permission)
 
-
+# helper function to produce a token for a specific permission
 def _requestToken(secret, permission, _id):
     encoded = jwt.encode({
         'id': _id,
@@ -108,6 +111,7 @@ if __name__ == '__main__':
         except KeyError:
             return Response("Bad request data", status=400)
 
+        # user use id and password to login
         db_name = 'access'
         client = MongoClient('localhost', 27017)
         db = client[db_name]
@@ -116,6 +120,7 @@ if __name__ == '__main__':
         if password_item is None or password_item['password'] != password:
             return Response("Authentication error", status=403)
 
+        # register public key to the server
         id_to_publicKey_collection = db['id_to_publicKey']
 
         if id_to_publicKey_collection.find_one({'id': _id}) is not None:
@@ -128,7 +133,8 @@ if __name__ == '__main__':
         client.close()
 
         return {}
-
+  
+    # request token from the server
     @app.route('/request', methods=['POST'])
     def requestToken():
         body = request.get_json()
@@ -149,6 +155,8 @@ if __name__ == '__main__':
             return Response("Authentication error", status=403)
 
         token = _requestToken(SECRET, permission, [userId])
+
+        # if there exist an expired token which has the same utility, renew it
         collection = db['token_to_expiration']
         if collection.find_one({'token': token}) is not None:
             collection.delete_one({'token': token})
@@ -156,6 +164,7 @@ if __name__ == '__main__':
 
         return token
 
+    # revoke delegated token
     @app.route('/revoke', methods=['POST'])
     def revoke():
         body = request.get_json()
@@ -192,6 +201,7 @@ if __name__ == '__main__':
         db = client[db_name]
         collection = db['token_to_expiration']
 
+        # set expiraton time to be the current time
         if collection.find_one({'token': token}) is not None:
             collection.update({'token': token}, {
                 'token': token,
@@ -203,6 +213,7 @@ if __name__ == '__main__':
 
         return {}
 
+    # delegate token to a child
     @app.route('/delegate', methods=['POST'])
     def delegate():
         body = request.get_json()
@@ -234,6 +245,8 @@ if __name__ == '__main__':
             decoded = jwt.decode(token, SECRET, algorithm='HS256')
         except DecodeError:
             return Response("Bad request token", status=400)
+        
+        # add childID to the delegation chain
         decoded['id'].append(childID)
         new_encoded = jwt.encode(decoded, SECRET, algorithm='HS256').decode('ascii')
 
@@ -257,6 +270,7 @@ if __name__ == '__main__':
 
         return new_encoded
 
+    # an entry to request for any operation with the system
     @app.route('/operate', methods=['POST'])
     def operate():
         body = request.get_json()
@@ -294,6 +308,7 @@ if __name__ == '__main__':
             'Accept-Charset': 'UTF-8'
         }
 
+        # forward the requested operation to master application server
         if operation['method'] == 'GET':
             get_url = operation_url + '?' + '&'.join(
                 ['{}={}'.format(k, v) for k, v in operation['params'].items()])

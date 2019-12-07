@@ -47,7 +47,6 @@ eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhIl0sInBlcm1pc3Npb24iOnsicmVzb3V
 curl -d '{"id": "a", "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhIl0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJyZWdpc3RlciIsInBhcmFtcyI6e319fQ.k2nXvLdiAF0aklDIjE4AAqUplBS1Zr-8x-lnfQvnVkI", "signature": "IBqt5BqbRWaO17wDzEnaN3iwbsPn43NOOkpUH2kufdYX0mGirIIL8SarZ0bdQlAa7I78QvgW7Nuu3HD/dxYd3kx3/Uk77l/IPelDOSqrT0jspsI7tfLK9uL5+KpbICw/sAFbGIl4eNSFKHS2ifxUNjW4gMmiUpvWV5TzfueC37+Ja//ASszxXSkgiHUMn8GYPoTth3xb+YdmeJnL4IVjVrjowmrPUl5PbO8gFKExOebr5SHQlLZybECdJI1FjvDsDi/NiAtJeSau9+eQXI0dV2FvgtFsKBA6klHkUmXsSzvTPPesVvdshAyMRkUffufwgijelMV7Xaix5+uZ1TKhNQ=="}' -H "Content-Type: application/json" -X POST http://localhost:4999/revoke
 
 # delegate
-
 curl -d '{"id": "a", "childID": "b", "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhIl0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJyZWdpc3RlciIsInBhcmFtcyI6e319fQ.k2nXvLdiAF0aklDIjE4AAqUplBS1Zr-8x-lnfQvnVkI", "signature": "IBqt5BqbRWaO17wDzEnaN3iwbsPn43NOOkpUH2kufdYX0mGirIIL8SarZ0bdQlAa7I78QvgW7Nuu3HD/dxYd3kx3/Uk77l/IPelDOSqrT0jspsI7tfLK9uL5+KpbICw/sAFbGIl4eNSFKHS2ifxUNjW4gMmiUpvWV5TzfueC37+Ja//ASszxXSkgiHUMn8GYPoTth3xb+YdmeJnL4IVjVrjowmrPUl5PbO8gFKExOebr5SHQlLZybECdJI1FjvDsDi/NiAtJeSau9+eQXI0dV2FvgtFsKBA6klHkUmXsSzvTPPesVvdshAyMRkUffufwgijelMV7Xaix5+uZ1TKhNQ=="}' -H "Content-Type: application/json" -X POST http://localhost:4999/delegate
 
 # operate
