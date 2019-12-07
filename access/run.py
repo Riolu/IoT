@@ -280,7 +280,7 @@ if __name__ == '__main__':
         publicKey = pubkey_item['publicKey']
         if not rsa_verify(signature, json.dumps(operation), publicKey):
             return Response("Authentication error", status=403)
-        
+
         try:
             verifyResult = verify(token, SECRET, operation)
         except DecodeError:

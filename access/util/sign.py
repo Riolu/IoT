@@ -97,8 +97,25 @@ if __name__ == '__main__':
     print('delegate')
     print(sign('brian', privKey['alita']))
     print('revoke')
-    print(sign('?', privKey['alita']))
+    print(
+        sign(
+            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6WyJhbGl0YSIsImJyaWFuIl0sInBlcm1pc3Npb24iOnsicmVzb3VyY2UiOiJzZWFyY2hCeUxvY1R5cGUiLCJwYXJhbXMiOnsibG9jIjoiKiIsInR5cGUiOiIqIn19fQ.lJqQJgK_dwrWgbI660OvyAuQ0LaV6IG2QS3mp4P1L5s',
+            privKey['alita']))
 
     for operation in alita_operations:
         print(operation['resource'])
         print(sign(json.dumps(operation), privKey['alita']))
+
+    brian_operations = [{
+        'resource': 'searchByLocType',
+        'method': 'GET',
+        'params': {
+            'loc': 'level5',
+            'type': 'pc'
+        }
+    }]
+
+    print('brian')
+    for operation in brian_operations:
+        print(operation['resource'])
+        print(sign(json.dumps(operation), privKey['brian']))
