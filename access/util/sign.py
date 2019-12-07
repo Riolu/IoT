@@ -26,28 +26,17 @@ if __name__ == '__main__':
         '-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAwxyl4H99t6S0h8xPqunqX9RgKKsXTHzjeZ6T4Tf+xebbAXUv\neM3Ed3YFF2yHUF/H52m4ucG/CWbS4JieT750oyIwGfEcWzklokXscdR2asPdEpLK\nQ/LHlt4sGAFS5ev8RBELT7M/rcVVU/YA9lgPhbsyTPVJ7TuedioLz78TTSEV2sEy\nh3Qae8iDUyevUdnGZBzR8/vFMosnkxYGGLLfOT9nFED3gcaal9gms2qSv92L4uDC\nQYHAxWxOs3UPDI9fLZPWErFhGKek1GQ4DGLvKp491OR63QdhpgFibdAn5WppglB8\nzMwZTyHuxXN4dBgfsukUP/PlefMw61RjbJbAywIDAQABAoIBAA8Mo6LIUqsaki4z\nTSXSuxg/KleYsshcjbMwzxk9F3KuVtAq+MlpnbDVMplW7qz9Zk7sMapqTlDsVHGs\nc/GUsCxxE6K8nUJQCx4UJKO3Dpc3mlK3bdCF5m01n9MOLxW6+Q9K/UNdgRjnMqiy\nPerCahgXk06qUNRyl8tnfNe+Vj/JneNhsA3WlV4jkhDVLDPYOIISHvTwjEa+ePUq\nrpGubaCMFxlEukMjjEgkgj6rWb16u92mWcjiySAUeqn+GeSBu+eNVspBnLjuQxiv\n6CWypofvX39x+R6AV3KMfbAWb7iBidgS/Llvgl83rEKZjtxWYBaHyCAC9HOP4BnE\nPhDExZECgYEAy1vy/xVpJwSreWxNAb7+GTs/OSVzh6KzwE/yZiWTNlvobmTPok2+\nUhAxmj25Yc1joBJFaBApvLmv1ZgT6eIPViMUSLoy224t2u+i1tw8RGSbBX0UPiJ1\nuOrQC6DK8I7mSsiqmn++9xQ32qMy3nj/FZfKXytX36ku0sFLKql/lbkCgYEA9Z4s\nx6aT7gKJWoFAntXwRSzIrhLf5HdXzF0jIbqoLWX9GSEYH64xVVu0AASTi1p5CvDa\n/Qxlb4RWSeJEIfHZgCOA5vQZfZYRQqD+t3P439FPkVT0HU5fUpfY2phYbqSYKCoV\ndedZNYn3OLwdYZ7ddju9l3cBLxA0wvY1/6LjzKMCgYBYNHe/oH/Nhr8BmbIFEdyR\nARu5I79qk223+nU/TQj/SPoV9+//jA0C9zcsmZ0xCK8vnP0x1+DilP/pe18X0Q+p\n4ulHakvo1W9aSRquazRQzfpXdRs0oCnDnUXD5Whg0vqccVFeVg50iPZ5BNRpnr21\nlfMXOGuS/YTrsR9zT7WhMQKBgGQeN66iLgaErixgJ1EXb7siyCJ8uxrLstQw2tMy\n3L60pfiKTuULAj0DBlpDg0j4dgKJrxoa5XYRgYLYYmFbzga3ciGyOnnApAR+z5VE\nBpxlG4PoFyGjAqQOFWz1UIa5PPSSQvEufmSeelF8DJXwReGd9Gg7MBZZCsi1x8kO\nQsD1AoGAV1eWB+FsMGV2kSBLKSVGlj0FcHl/CgZ66Z/dNppypjYvpy/CZRu076jL\nsB97Qg9JeHy1H6TEe7mzJSynjKEuBp1LXmLU9/YKNtz0nsifBX0UqWCrrC4hjVbU\nn8Yx+iD+kp1K/A/KojDzQPmnBCSkX6qbSXmucm5/VpmV0Qsks10=\n-----END RSA PRIVATE KEY-----'
     }
 
-    ls = [
-        {
-            'id': 'alita',
-            'msg': 'brian'  # user to delegate token
-        }
-        # {
-        #     'id': 'alita',
-        #     'msg': ''  # token to be revoked
-        # }
-    ]
-
-    operations = [{
+    alita_operations = [{
         'resource': 'register',
         'method': 'POST',
         'params': {},
         'data': {
             "td": {
                 "_type": "tv",
-                "id": "urn:dev:ops:23112-tv-1"
+                "id": "urn:dev:ops:23112-tv-1",
+                "publicity": 1
             },
-            "targetLoc": "level5",
-            "publicity": 1
+            "targetLoc": "level5"
         }
     }, {
         'resource': 'register',
@@ -74,6 +63,12 @@ if __name__ == '__main__':
             'loc': 'level4'
         }
     }, {
+        'resource': 'searchPublic',
+        'method': 'GET',
+        'params': {
+            'loc': 'level4b'
+        }
+    }, {
         'resource': 'searchByLocId',
         'method': 'GET',
         'params': {
@@ -84,23 +79,26 @@ if __name__ == '__main__':
         'resource': 'relocate',
         'method': 'PUT',
         'params': {
-            'fromLoc': '*',
-            'toLoc': '*',
-            'id': '*'
+            'fromLoc': 'level5',
+            'toLoc': 'level5b',
+            'id': 'urn:dev:ops:23112-tv-1'
         },
         'data': {}
     }, {
         'resource': 'delete',
         'method': 'DELETE',
         'params': {
-            'targetLoc': '',
-            'id': ''
+            'targetLoc': 'level5b',
+            'id': 'urn:dev:ops:23112-tv-1'
         }
     }]
 
-    for operation in operations:
-        ls.append({'id': 'alita', 'msg': json.dumps(operation)})
+    print('alita')
+    print('delegate')
+    print(sign('brian', privKey['alita']))
+    print('revoke')
+    print(sign('?', privKey['alita']))
 
-    for item in ls:
-        res = sign(item['msg'], privKey[item['id']])
-        print(res)
+    for operation in alita_operations:
+        print(operation['resource'])
+        print(sign(json.dumps(operation), privKey['alita']))
