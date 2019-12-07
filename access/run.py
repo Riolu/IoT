@@ -37,9 +37,9 @@ operation = {
 }
 '''
 
-def rsa_verify(signature, _id, publicKey):
+def rsa_verify(signature, msg, publicKey):
     sign = b64decode(signature)
-    h = SHA.new(_id.encode('utf-8'))
+    h = SHA.new(msg.encode('utf-8'))
     # keyDER = b64decode(privateKey)
     keyPub = RSA.importKey(publicKey)
     verifier = PKCS1_v1_5.new(keyPub)
@@ -176,8 +176,16 @@ if __name__ == '__main__':
             return Response("User not registered", status=403)
         
         publicKey = pubkey_item['publicKey']
-        if not rsa_verify(signature, _id, publicKey):
+        if not rsa_verify(signature, token, publicKey):
             return Response("Authentication error", status=403)
+
+        try:
+            decoded = jwt.decode(token, SECRET, algorithm='HS256')
+        except DecodeError:
+            return Response("Bad request token", status=400)
+
+        if _id not in decoded['id']:
+            return Response("Unauthorized to revoke the token", status=401)
 
         db_name = 'access'
         client = MongoClient('localhost', 27017)
@@ -192,8 +200,8 @@ if __name__ == '__main__':
         else:
             collection.insert_one({'token': token, 'expiration': time.time()})
         client.close()
-        return {}
 
+        return {}
 
     @app.route('/delegate', methods=['POST'])
     def delegate():
@@ -216,7 +224,7 @@ if __name__ == '__main__':
             return Response("User not registered", status=403)
         
         publicKey = pubkey_item['publicKey']
-        if not rsa_verify(signature, _id, publicKey):
+        if not rsa_verify(signature, childID, publicKey):
             return Response("Authentication error", status=403)
 
         if isStaleToken(token):
@@ -270,7 +278,7 @@ if __name__ == '__main__':
             return Response("User not registered", status=403)
         
         publicKey = pubkey_item['publicKey']
-        if not rsa_verify(signature, _id, publicKey):
+        if not rsa_verify(signature, json.dumps(operation), publicKey):
             return Response("Authentication error", status=403)
         
         try:
